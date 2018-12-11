@@ -1,0 +1,570 @@
+<html> 
+    <head> 
+        <title>  X-Wing  </title> 
+        <style> 
+            canvas { width: 100%; height: 100% }
+        </style> 
+    </head> 
+    <body> 
+        <script src="three.min.js"> </script> 
+        
+        <script> 
+			
+            window.addEventListener('keydown',doKeyDown,true);
+            // agregamos el "listener" para "escuchar" los eventos del teclado
+            
+             var cam_zpos = 10.0;
+            var cam_xpos = 0.0;
+			var x_zpos = 0;
+			var x_xpos = 0;
+            var Pi = 3.14159265358;
+            // x grados a radianes -        x * Pi / 180
+            // x radianes a grados -        x * 180 / Pi
+            var ang_rad = 0;
+			var y = 2.3;
+			var z = 10.0;
+            
+            function doKeyDown(evt){
+                console.log("Tecla presionada: "+evt.keyCode);
+                 switch (evt.keyCode) {
+                    case 38:  /* Up arrow was pressed */                        
+                        var dx = 1.5 * Math.sin(ang_rad); 
+                        var dz = 1.5 * Math.cos(ang_rad); 
+                        cam_zpos -= dz;
+                        cam_xpos -= dx;
+                        break;
+                    case 40:  /* Down arrow was pressed */                        
+                        var dx = 1.5 * Math.sin(ang_rad); 
+                        var dz = 1.5 * Math.cos(ang_rad); 
+                        cam_zpos += dz;
+                        cam_xpos += dx;
+                        break;
+                    case 37:  /* Left arrow was pressed */                        
+                        ang_rad += (5* Pi / 180);
+                        break;
+                    case 39:  /* Right arrow was pressed */
+                        ang_rad -= (5* Pi / 180);                        
+                        break;
+                    case 87:  /* W was pressed */
+                        y += .5;              
+                    break;
+                    case 83:  /* S was pressed */
+                         y -= .5;                    
+                    break;
+                    case 65: /*A pressed  - - - */
+                       var dx = 1 * Math.sin(ang_rad+1.57); 
+                        var dz = 1 * Math.cos(ang_rad+1.57); 
+                        cam_zpos -= dz;
+                        cam_xpos -= dx;
+                    break;
+                    case 68: /*D pressed  - - - */
+                       var dx = 1 * Math.sin(ang_rad+1.57); 
+                        var dz = 1 * Math.cos(ang_rad+1.57); 
+                        cam_zpos += dz;
+                        cam_xpos += dx;                
+                    break;
+					case 85: /*U pressed  - - - */
+					console.log(gala.rotation.x);
+						if(gala.rotation.x > -.3){
+                        gala.rotation.x-=.1; 
+						gala2.rotation.x+=.1; 						
+						gala3.rotation.x+=.1; 
+						gala4.rotation.x-=.1; 
+						}
+                    break;	
+					case 74: /*J pressed  - - - */
+					console.log(gala.rotation.x);
+						if(gala.rotation.x < -0.1){
+                        gala.rotation.x+=.1; 
+						gala2.rotation.x-=.1; 						
+						gala3.rotation.x-=.1; 
+						gala4.rotation.x+=.1;
+						}
+                    break;
+					case 73: /*I pressed  - - - */
+						if(gcabina.rotation.z < 0.81 ){
+						console.log(gcabina.rotation.z);
+                        gcabina.rotation.z += .1;
+						}
+                    break;
+                    case 75: /*K pressed  - - - */
+						if(gcabina.rotation.z > 0.01 ){
+						console.log(gcabina.rotation.z);
+						gcabina.rotation.z -= .1;
+						}                   
+                    break;
+					case 72: /*H pressed  - - - */
+                        xwing.rotation.y-=.1;						
+                    break;
+					case 70: /*F pressed  - - - */
+                        xwing.rotation.y+=.1;
+                    break;
+					case 86: /*V pressed  - - - */
+                        xwing.position.y+=.1;
+                    break;
+					case 66: /*B pressed  - - - */
+                        xwing.position.y-=.1;
+                    break;
+					case 84: /*T pressed  - - - */
+						var dix = .5 * Math.sin(xwing.rotation.y - 1.5707); 
+                        var diz = .5 * Math.cos(xwing.rotation.y - 1.5707);
+						x_zpos -= diz;
+                        x_xpos -= dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;
+						
+                    break;
+					case 71: /*G pressed  - - - */
+                        var dix = .5 * Math.sin(xwing.rotation.y - 1.5707); 
+                        var diz = .5 * Math.cos(xwing.rotation.y - 1.5707);
+						x_zpos += diz;
+                        x_xpos += dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;
+                    break;
+					case 89: /*Y pressed  - - - */
+						var dix = .5 * Math.sin(xwing.rotation.y); 
+                        var diz = .5 * Math.cos(xwing.rotation.y);
+						x_zpos += diz;
+                        x_xpos += dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;						
+                    break;
+					case 82: /*R pressed  - - - */
+						var dix = .5 * Math.sin(xwing.rotation.y); 
+                        var diz = .5 * Math.cos(xwing.rotation.y);
+						x_zpos -= diz;
+                        x_xpos -= dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;						
+                    break;
+                }
+            }
+			
+			
+        
+           
+            // three basic components of a scene
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+			
+			var geomv = new THREE.Geometry();
+			var geom2v = new THREE.Geometry();
+			var geom3v = new THREE.Geometry();
+			var geom4v = new THREE.Geometry();
+			
+			//puntos cabina
+			geomv.vertices.push(new THREE.Vector3( 4.2,1.6,-1.35));   // index 0
+			geomv.vertices.push(new THREE.Vector3( 4.2,1.6,1.35));   // index 1
+			geomv.vertices.push(new THREE.Vector3( 3.8,1.6,-1.35));   // index 2
+			geomv.vertices.push(new THREE.Vector3( 3.8,1.6,1.35));   // index 3
+			geomv.vertices.push(new THREE.Vector3( 4,2.5,-1.25));   // index 4
+			geomv.vertices.push(new THREE.Vector3( 4,2.5,1.25));   // index 5
+			
+			geom2v.vertices.push(new THREE.Vector3( 4.2,1.6,-1.35));   // index 0
+			geom2v.vertices.push(new THREE.Vector3( 4.2,1.6,1.35));   // index 1
+			geom2v.vertices.push(new THREE.Vector3( 3.8,1.6,-1.35));   // index 2
+			geom2v.vertices.push(new THREE.Vector3( 3.8,1.6,1.35));   // index 3
+			geom2v.vertices.push(new THREE.Vector3( 4,2.5,-1.25));   // index 4
+			geom2v.vertices.push(new THREE.Vector3( 4,2.5,1.25));   // index 5
+			geom2v.vertices.push(new THREE.Vector3( 9,1.6,-1.15));   // index 6
+			geom2v.vertices.push(new THREE.Vector3( 9,1.6,1.15));   // index 7
+			
+			geom3v.vertices.push(new THREE.Vector3(19,1.47,.57)); //0
+			geom3v.vertices.push(new THREE.Vector3(19,1.47,-.57)); //1
+			geom3v.vertices.push(new THREE.Vector3(19,-1,.5)); //2
+			geom3v.vertices.push(new THREE.Vector3(19,-1,-.5)); //3
+			geom3v.vertices.push(new THREE.Vector3(19,-.2,1)); //4
+			geom3v.vertices.push(new THREE.Vector3(19,-.2,-1)); //5
+			geom3v.vertices.push(new THREE.Vector3(24,0.4,.4)); //6
+			geom3v.vertices.push(new THREE.Vector3(24,0.4,-.4)); //7
+			
+			geom4v.vertices.push(new THREE.Vector3(-1.9,1.4,3.1)); //0
+			geom4v.vertices.push(new THREE.Vector3(1.9,1.4,3.1)); //1
+			geom4v.vertices.push(new THREE.Vector3(-1.9,2.4,3.1)); //2
+			geom4v.vertices.push(new THREE.Vector3(1.9,2.4,3.1)); //3
+			geom4v.vertices.push(new THREE.Vector3(-1.9,1.4,6.6)); //4
+			geom4v.vertices.push(new THREE.Vector3(1.9,1.4,6.6)); //5
+			
+			geom4v.faces.push(new THREE.Face3(3,5,1));
+			geom4v.faces.push(new THREE.Face3(3,2,5));
+			geom4v.faces.push(new THREE.Face3(2,4,5));
+			geom4v.faces.push(new THREE.Face3(2,0,4));
+			
+			geom3v.faces.push(new THREE.Face3(0,4,6));
+			geom3v.faces.push(new THREE.Face3(4,2,6));
+			geom3v.faces.push(new THREE.Face3(0,6,7));
+			geom3v.faces.push(new THREE.Face3(0,7,1));
+			geom3v.faces.push(new THREE.Face3(1,7,5));
+			geom3v.faces.push(new THREE.Face3(5,7,3));
+			geom3v.faces.push(new THREE.Face3(6,2,7));
+			geom3v.faces.push(new THREE.Face3(7,2,3));
+			
+			geom3v.faces.push(new THREE.Face3(0,6,4));
+			geom3v.faces.push(new THREE.Face3(4,6,2));
+			geom3v.faces.push(new THREE.Face3(0,7,6));
+			geom3v.faces.push(new THREE.Face3(0,1,7));
+			geom3v.faces.push(new THREE.Face3(1,5,7));
+			geom3v.faces.push(new THREE.Face3(5,3,7));
+			geom3v.faces.push(new THREE.Face3(6,7,2));
+			geom3v.faces.push(new THREE.Face3(7,3,2));
+			
+			geomv.faces.push( new THREE.Face3( 0,2,4 ) );
+			geomv.faces.push( new THREE.Face3( 0,3,2 ) );
+			geomv.faces.push( new THREE.Face3( 1,3,0 ) );
+			geomv.faces.push( new THREE.Face3( 5,3,1 ) );
+			geomv.faces.push( new THREE.Face3( 5,4,3 ) );
+			geomv.faces.push( new THREE.Face3( 3,4,2 ) );
+			
+			geomv.faces.push( new THREE.Face3( 0,4,2 ) );
+			geomv.faces.push( new THREE.Face3( 5,1,3 ) );
+			geomv.faces.push( new THREE.Face3( 5,3,4 ) );
+			geomv.faces.push( new THREE.Face3( 3,2,4 ) );
+			
+			
+			geom2v.faces.push( new THREE.Face3( 6,0,4 ) );
+			geom2v.faces.push( new THREE.Face3( 7,6,5 ) );
+			geom2v.faces.push( new THREE.Face3( 6,4,5 ) );
+			geom2v.faces.push(new THREE.Face3(7,5,1));
+			
+			geom2v.faces.push( new THREE.Face3( 6,4,0 ) );
+			geom2v.faces.push( new THREE.Face3( 7,5,6 ) );
+			geom2v.faces.push( new THREE.Face3( 6,5,4 ) );
+			geom2v.faces.push(new THREE.Face3(7,1,5));		
+			
+			geomv.computeFaceNormals();
+			geom2v.computeFaceNormals();
+			geom3v.computeFaceNormals();
+			geom4v.computeFaceNormals();
+			
+			
+			
+			gala = new THREE.Object3D();
+			gala2 = new THREE.Object3D();
+			gala3 = new THREE.Object3D();
+			gala4 = new THREE.Object3D();
+			gcabina = new THREE.Object3D();
+			xwing = new THREE.Object3D();
+			
+			var cosaMaterial = new THREE.MeshLambertMaterial({color: 0xEEEEEE, wireframe: false});
+			var cosaMaterial2 = new THREE.MeshLambertMaterial({color: 0x990000, wireframe: false});
+			var cosaMaterial3 = new THREE.MeshLambertMaterial({color: 0x009900, wireframe: false});
+			var cosaMaterial4 = new THREE.MeshLambertMaterial({color: 0x777777, wireframe: false});
+			var vidrio = new THREE.MeshLambertMaterial({transparent:true, color: 0x004466, wireframe: false, opacity: 0.9});
+			
+			//aqui va todo
+			//cabina
+			var punta = new THREE.Mesh(geom3v, cosaMaterial4);
+			xwing.add(punta);
+			var cab = new THREE.Mesh( geomv, vidrio);
+			xwing.add(cab);
+			var cab2 = new THREE.Mesh(geom2v, vidrio);
+			cab2.position.x -= 4;
+			cab2.position.y -= 2.5;
+			gcabina.add(cab2);
+			gcabina.position.x += 4;
+			gcabina.position.y += 2.5;
+			xwing.add(gcabina);
+			//cola
+			var cola = new THREE.Mesh(new THREE.CubeGeometry(7.51,4.08,2.8), cosaMaterial);
+			var cola1 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterial);
+			cola1.rotation.x -= 0.218166;
+			cola1.position.z += .65;
+			cola1.position.y += .8035;
+			var cola2 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterial);
+			cola2.rotation.x += 0.218166;
+			cola2.position.z += .65;
+			cola2.position.y -= .8035;
+			var cola3 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterial);
+			cola3.rotation.x += 0.218166;
+			cola3.position.z -= .65;
+			cola3.position.y += .8035;
+			var cola4 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterial);
+			cola4.rotation.x -= 0.218166;
+			cola4.position.z -= .65;
+			cola4.position.y -= .8035;
+			var cola5 = new THREE.Mesh(new THREE.CubeGeometry(7.5,1.9,1.42),cosaMaterial);
+			cola5.rotation.x -= 0.219166;
+			cola5.position.z += .475;
+			cola5.position.y -= 1.275;
+			var cola6 = new THREE.Mesh(new THREE.CubeGeometry(7.5,1.9,1.42),cosaMaterial);
+			cola6.rotation.x += 0.219166;
+			cola6.position.z -= .475;
+			cola6.position.y -= 1.275;
+			
+			var droid = new THREE.Mesh(new THREE.SphereGeometry(.8,15,14),cosaMaterial3);
+			droid.position.y += 2.4;
+			droid.position.x += 2.5;
+			xwing.add(droid);
+			
+			var dro = new THREE.Mesh(new THREE.CylinderGeometry(.81,.81,2,20,8,false), cosaMaterial2);
+			dro.position.x += 2.5;
+			dro.position.y += 1.35;
+			xwing.add(dro);
+			//ala
+			var btub = new THREE.Mesh(geom4v, cosaMaterial);
+			btub.position.y -= 1;
+			
+			var btub2 = new THREE.Mesh(geom4v, cosaMaterial);
+			btub2.rotation.z += 3.14159;
+			btub2.position.y += 1.6;
+			btub2.position.z +=0;
+			
+			var btub3 = new THREE.Mesh(geom4v, cosaMaterial);
+			btub3.rotation.z += 3.14159;
+			btub3.position.y += 1.6;
+			
+			var btub4 = new THREE.Mesh(geom4v, cosaMaterial);
+			btub4.position.y -= 1;
+			
+			var uala = new THREE.Mesh(new THREE.CubeGeometry(2.5,.2,1),cosaMaterial);
+			uala.position.z += 2;
+			uala.position.y += .3;
+			var ala = new THREE.Mesh(new THREE.CubeGeometry(4,.2,2),cosaMaterial);
+			ala.position.z += 3.1;
+			ala.position.y += .3;
+			var ala1 = new THREE.Mesh(new THREE.CubeGeometry(3,.2,7.8),cosaMaterial);
+			ala1.position.z += 8.0;
+			ala1.position.y += .3;
+			ala1.position.x += .5;
+			var ala2 = new THREE.Mesh(new THREE.CubeGeometry(1.5,.2,8),cosaMaterial);
+			ala2.rotation.y += 0.195799;
+			ala2.position.y += .3;
+			ala2.position.x -= 1.05;
+			ala2.position.z += 7.8;
+			var prop = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterial);
+			prop.rotation.z += 1.57079;
+			prop.position.z += 3.1;
+			prop.position.y += 1.4;
+			var mprop = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial4);
+			mprop.rotation.z += 1.57079;
+			mprop.position.z += 3.1;
+			mprop.position.y += 1.4;
+			mprop.position.x -= 3.5;
+			var tub = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterial);
+			tub.rotation.z += 1.57079;
+			tub.position.z += 11.7;
+			tub.position.y += .7;
+			tub.position.x +=.4;
+			var las = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las.rotation.z += 1.57079;
+			las.position.z += 11.7;
+			las.position.y += .7;
+			las.position.x +=6.4;
+			var tub2 = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterial);
+			tub2.rotation.z += 1.57079;
+			tub2.position.z += 11.7;
+			tub2.position.y -= 0;
+			tub2.position.x +=.4;
+			var las2 = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las2.rotation.z += 1.57079;
+			las2.position.z += 11.7;
+			las2.position.y -= 0;
+			las2.position.x +=6.4;
+			var tub3 = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterial);
+			tub3.rotation.z += 1.57079;
+			tub3.position.z += 11.7;
+			tub3.position.y -= .1;
+			tub3.position.x +=.4;
+			var las3 = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las3.rotation.z += 1.57079;
+			las3.position.z += 11.7;
+			las3.position.y -= .1;
+			las3.position.x +=6.4;
+			var tub4 = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterial);
+			tub4.rotation.z += 1.57079;
+			tub4.position.z += 11.7;
+			tub4.position.y += .7;
+			tub4.position.x +=.4;
+			var las4 = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las4.rotation.z += 1.57079;
+			las4.position.z += 11.7;
+			las4.position.y += .7;
+			las4.position.x +=6.4;
+			var prop2 = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterial);
+			prop2.rotation.z += 1.57079;
+			prop2.position.z += 3.1;
+			prop2.position.y -= .8;
+			var mprop2 = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial4);
+			mprop2.rotation.z += 1.57079;
+			mprop2.position.z += 3.1;
+			mprop2.position.y -= .8;
+			mprop2.position.x -= 3.5;
+			var prop3 = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterial);
+			prop3.rotation.z += 1.57079;
+			prop3.position.z += 3.1;
+			prop3.position.y -= .8;
+			var mprop3 = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial4);
+			mprop3.rotation.z += 1.57079;
+			mprop3.position.z += 3.1;
+			mprop3.position.y -= .8;
+			mprop3.position.x -= 3.5;
+			var prop4 = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterial);
+			prop4.rotation.z += 1.57079;
+			prop4.position.z += 3.1;
+			prop4.position.y += 1.4;
+			var mprop4 = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial4);
+			mprop4.rotation.z += 1.57079;
+			mprop4.position.z += 3.1;
+			mprop4.position.y += 1.4;
+			mprop4.position.x -= 3.5;
+			//cabina
+			var fren3 = new THREE.Mesh(new THREE.CubeGeometry(5,1.4,2.3),cosaMaterial3);//en este poner la textura de adentro de la cabina
+			fren3.position.x += 6.2;
+			fren3.position.y += .85;
+			xwing.add(fren3);
+			var fren4 = new THREE.Mesh(new THREE.CubeGeometry(10.5,1.3,1.1),cosaMaterial);
+			fren4.rotation.z -= .028;
+			fren4.position.x += 13.95;
+			fren4.position.y += 0.8;
+			xwing.add(fren4);
+			var fren9 = new THREE.Mesh(new THREE.CubeGeometry(15.6,1.3,1),cosaMaterial2);
+			fren9.rotation.z += .05;
+			fren9.position.x += 11.35;
+			fren9.position.y -= 0.62;
+			xwing.add(fren9);
+			var fren5 = new THREE.Mesh(new THREE.CubeGeometry(10.5,1.3,1.1),cosaMaterial);
+			fren5.rotation.y -= .06;
+			fren5.rotation.z -= .028;
+			fren5.position.x += 13.95;
+			fren5.position.y += .79;
+			fren5.position.z -= .28;
+			xwing.add(fren5);
+			var fren6 = new THREE.Mesh(new THREE.CubeGeometry(10.5,1.3,1.1),cosaMaterial);
+			fren6.rotation.y += .06;
+			fren6.rotation.z -= .028;
+			fren6.position.x += 13.95;
+			fren6.position.y += .79;
+			fren6.position.z += .28;
+			xwing.add(fren6);
+			var fren10 = new THREE.Mesh(new THREE.CubeGeometry(10.5,.7,1.1),cosaMaterial3);
+			fren10.rotation.x -= 0.299166;
+			fren10.rotation.z += 0.07;
+			fren10.rotation.y += .06;
+			fren10.position.z += .55;
+			fren10.position.y -= .8;
+			fren10.position.x += 8.5;
+			xwing.add(fren10);
+			var fren11 = new THREE.Mesh(new THREE.CubeGeometry(10.5,.7,1.1),cosaMaterial3);
+			fren11.rotation.x += 0.299166;
+			fren11.rotation.z += .07;
+			fren11.rotation.y -= .06;
+			fren11.position.z -= .55;
+			fren11.position.y -= .8;
+			fren11.position.x += 8.5;
+			xwing.add(fren11);
+			//Costados de frente
+			var fren = new THREE.Mesh(new THREE.CubeGeometry(15.5,1.6,1.2),cosaMaterial);
+			fren.rotation.x += 0.218166;
+			fren.rotation.y -= .06;
+			fren.position.z -= .6;
+			fren.position.y += .6035;
+			fren.position.x += 11.4;
+			xwing.add(fren);
+			var fren2 = new THREE.Mesh(new THREE.CubeGeometry(15.5,1.6,1.2),cosaMaterial);
+			fren2.rotation.x -= 0.218166;
+			fren2.rotation.y += .06;
+			fren2.position.z += .6;
+			fren2.position.y += .6035;
+			fren2.position.x += 11.4;
+			xwing.add(fren2);
+			var fren7 = new THREE.Mesh(new THREE.CubeGeometry(15.49,1.2,1),cosaMaterial);
+			fren7.rotation.x += 0.218166;
+			fren7.rotation.y += .07;
+			fren7.position.z += .67;
+			fren7.position.y -= .32;
+			fren7.position.x += 11.4;
+			xwing.add(fren7);
+			var fren8 = new THREE.Mesh(new THREE.CubeGeometry(15.49,1.2,1),cosaMaterial);
+			fren8.rotation.x -= 0.218166;
+			fren8.rotation.y -= .07;
+			fren8.position.z -= .67;
+			fren8.position.y -= .32;
+			fren8.position.x += 11.4;
+			xwing.add(fren8);
+			
+			gala.add(uala);
+			gala.add(ala);
+			gala.add(ala1);
+			gala.add(ala2);
+			xwing.add(gala);
+			
+			gala2 = gala.clone();
+			
+			gala2.rotation.x += Math.PI;
+			gala2.position.y += .51;
+			gala3 = gala.clone();
+			gala3.position.y -= .6;
+			gala4 = gala2.clone();
+			gala4.position.y -= .6;
+			//scene
+			xwing.add(cola);
+			xwing.add(cola1);
+			xwing.add(cola2);
+			xwing.add(cola3);
+			xwing.add(cola4);
+			xwing.add(cola5);
+			xwing.add(cola6);
+			xwing.add(gala2);
+			xwing.add(gala3);
+			xwing.add(gala4);
+			gala.add(prop);
+			gala.add(mprop);
+			gala.add(tub);
+			gala.add(las);
+			gala.add(btub);
+			gala2.add(prop2);
+			gala2.add(mprop2);
+			gala2.add(tub2);
+			gala2.add(las2);
+			gala2.add(btub2);
+			gala3.add(prop3);
+			gala3.add(mprop3);
+			gala3.add(tub3);
+			gala3.add(las3);
+			gala3.add(btub3);
+			gala4.add(prop4);
+			gala4.add(mprop4);
+			gala4.add(tub4);
+			gala4.add(las4);
+			gala4.add(btub4);
+			
+			scene.add(xwing);
+
+			 renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+			
+			var pointLight = new THREE.PointLight( 0xFFFFFF );
+			pointLight.position.x = 0;
+            pointLight.position.y = 50;
+            pointLight.position.z = 50;
+            scene.add(pointLight); 
+			
+			var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+			pointLight2.position.x = 50;
+            pointLight2.position.y = 50;
+            pointLight2.position.z = -50;
+            scene.add(pointLight2);
+			
+			var pointLight3 = new THREE.PointLight( 0xFFFFFF );
+			pointLight3.position.x = -50;
+            pointLight3.position.y = -50;
+            pointLight3.position.z = 0;
+            scene.add(pointLight3);
+            
+            // set the background color
+            renderer.setClearColor(0x000022, 1);
+			var render = function () { 
+                requestAnimationFrame(render); 
+				camera.position.z = cam_zpos; 
+                camera.position.x = cam_xpos; 
+                camera.rotation.y = ang_rad;  
+				camera.position.y = y;
+                renderer.render(scene, camera); 
+            };
+
+            render();             
+        </script> 
+    </body> 
+</html>

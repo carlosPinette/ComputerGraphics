@@ -1,0 +1,186 @@
+<!-- Carlos Ramón Perera Pinette A01099559
+		Pieza de Verde de Tetris
+		18 de octubre de 2013	-->
+<html> 
+    <head> 
+        <title> Defining a 3D Shape </title> 
+        <style> 
+            canvas { width: 100%; height: 100% }
+        </style> 
+    </head> 
+    <body> 
+        <script src="three.min.js"> </script> 
+        
+        <script> 
+
+            window.addEventListener('keydown',doKeyDown,true);
+            // agregamos el "listener" para "escuchar" los eventos del teclado
+            
+            var cam_zpos = 20.0;
+            
+            function doKeyDown(evt){
+                //console.log("Tecla presionada: "+evt.keyCode);
+                switch (evt.keyCode) {
+                    case 38:  /* Up arrow pressed */                        
+
+                        break;
+                    case 40:  /* Down arrow pressed */
+
+                        break;
+                    case 37:  /* Left arrow pressed */
+
+                        break;
+                    case 39:  /* Right arrow pressed */
+
+                        break;
+                    case 87:  /* W was pressed */
+                        camera.position.y += 0.5;                        
+                    break;
+                    case 83:  /* S was pressed */
+                        camera.position.y -= 0.5;                        
+                    break;
+                    case 69:  /* E was pressed */
+                        
+                    break;
+                    case 68:  /* D was pressed */
+                        
+                    break;
+                }
+            }
+
+            // three basic components of a scene
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+
+
+            // create a new geometry
+            var geom = new THREE.Geometry(); 
+
+            // push the box 3D points
+            geom.vertices.push(new THREE.Vector3( 0,  14, 1));   // index 0            
+            geom.vertices.push(new THREE.Vector3(  -2,  14, 1));   // index 1
+            geom.vertices.push(new THREE.Vector3(  -2,  10,  1));   // index 2
+            geom.vertices.push(new THREE.Vector3( 0,  10,  1));   // index 3
+            geom.vertices.push(new THREE.Vector3( 0,  12, 1));   // index 4            
+            geom.vertices.push(new THREE.Vector3(  2,  12, 1));   // index 5
+            geom.vertices.push(new THREE.Vector3(  2,  16,  1));   // index 6
+            geom.vertices.push(new THREE.Vector3( 0,  16,  1));   // index 7
+			
+			geom.vertices.push(new THREE.Vector3( 0,  14, -1));   // index 8           
+            geom.vertices.push(new THREE.Vector3(  -2,  14, -1));   // index 9
+            geom.vertices.push(new THREE.Vector3(  -2,  10,  -1));   // index 10
+            geom.vertices.push(new THREE.Vector3( 0,  10,  -1));   // index 11
+            geom.vertices.push(new THREE.Vector3( 0,  12, -1));   // index 12          
+            geom.vertices.push(new THREE.Vector3(  2,  12, -1));   // index 13
+            geom.vertices.push(new THREE.Vector3(  2,  16,  -1));   // index 14
+            geom.vertices.push(new THREE.Vector3( 0,  16,  -1));   // index 15
+
+            // ENFRENTE
+            geom.faces.push( new THREE.Face3( 0, 6, 7 ) );      // index 0
+            geom.faces.push( new THREE.Face3( 0, 5, 6 ) );      // index 1
+			geom.faces.push( new THREE.Face3( 0, 4, 5 ) );      // index 1
+			geom.faces.push( new THREE.Face3( 0, 2, 3 ) );      // index 1
+			geom.faces.push( new THREE.Face3( 0, 1, 2 ) );      // index 1
+
+            // ATRAS
+            geom.faces.push( new THREE.Face3( 8, 15, 14 ) );      // index 0
+            geom.faces.push( new THREE.Face3( 8, 14, 13 ) );      // index 1
+			geom.faces.push( new THREE.Face3( 8, 13, 12 ) );      // index 1
+			geom.faces.push( new THREE.Face3( 8, 11, 10 ) );      // index 1
+			geom.faces.push( new THREE.Face3( 8, 10, 9 ) );      // index 1
+
+            // izq  
+            geom.faces.push( new THREE.Face3( 1, 10, 2 ) );      // index 4
+            geom.faces.push( new THREE.Face3( 1, 9, 10 ) );      // index 5
+
+            // der
+            geom.faces.push( new THREE.Face3( 6, 5, 13 ) );      // index 6
+            geom.faces.push( new THREE.Face3( 6, 13, 14 ) );      // index 7
+
+            // arriba 1
+            geom.faces.push( new THREE.Face3( 0, 8, 9 ) );      // index 8
+            geom.faces.push( new THREE.Face3( 0, 9, 1 ) );      // index 9
+
+            // abajo1
+            geom.faces.push( new THREE.Face3( 2, 10, 11 ) );      // index 10
+            geom.faces.push( new THREE.Face3( 2, 11, 3	 ) );      // index 11
+			
+			// arriba arriba 1
+            geom.faces.push( new THREE.Face3( 7, 6, 14 ) );      // index 10
+            geom.faces.push( new THREE.Face3( 7, 14, 15	 ) );      // index 11
+			
+			// abajoarriba1
+            geom.faces.push( new THREE.Face3( 5, 4, 12 ) );      // index 10
+            geom.faces.push( new THREE.Face3( 5, 12, 13	 ) );      // index 11
+			
+			// derecha abajo 1
+            geom.faces.push( new THREE.Face3( 4, 3, 11 ) );      // index 10
+            geom.faces.push( new THREE.Face3( 4, 11, 12	 ) );      // index 11
+			
+			// izquierda arriba 1
+            geom.faces.push( new THREE.Face3( 0, 7, 15 ) );      // index 10
+            geom.faces.push( new THREE.Face3( 0, 15, 8	 ) );      // index 11
+
+            geom.computeFaceNormals();
+
+
+            // create a Lambert material
+            var cosaMaterial = new THREE.MeshLambertMaterial(
+                        {
+                            color: 0xEEEEEE
+                        });
+
+            // create a wireframe material
+            var meshMaterial = new THREE.MeshBasicMaterial({color: 0xff0000, wireframe: true});
+
+            var object = new THREE.Mesh( geom, cosaMaterial);
+            var object2 = new THREE.Mesh( geom, meshMaterial);
+
+            group = new THREE.Object3D();           // create an empty container
+            group.add( object );                    // add a mesh with geometry to it
+            group.add( object2 );                   // add a mesh with geometry to it
+            
+            object2.position.y -=10;
+
+            scene.add( group );                     // add the group to the scene                  
+            
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+
+            camera.position.z = cam_zpos; 
+			camera.position.y = 8;
+
+            // create some point lights
+            var pointLight = new THREE.PointLight( 0x00FF00 );
+            var pointLight2 = new THREE.PointLight( 0x00FF00 );
+
+            // set its position
+            pointLight.position.x = 10;
+            pointLight.position.y = 50;
+            pointLight.position.z = 130;
+
+            // add to the scene
+            scene.add(pointLight);
+            
+            // set its position
+            pointLight2.position.x = 10;
+            pointLight2.position.y = -50;
+            pointLight2.position.z = -130;
+
+            // add to the scene
+            scene.add(pointLight2);
+            
+            // set the background color
+            renderer.setClearColor(0x000022, 1);
+
+            var render = function () { 
+                requestAnimationFrame(render);               
+                group.rotation.y += .005;
+                renderer.render(scene, camera); 
+            }; 
+
+            render();             
+        </script> 
+    </body> 
+</html>

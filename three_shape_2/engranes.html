@@ -1,0 +1,259 @@
+<!-- 
+	Lupita Martínez Azmitia A01096776
+	Carlos Ramón Perera Pinette A01099559
+	Gráficas Computacionales
+	Engranes con navegación
+
+	<- Girar a la izquierda
+	-> Girar a la derecha
+	^ Avanzar
+	v Retroceder
+	W arriba
+	S abajo
+	-->
+<html> 
+    <head> 
+        <title> Engranes </title> 
+        <style> 
+            canvas { width: 100%; height: 100% }
+        </style> 
+    </head> 
+    <body> 
+        <script src="three.min.js"> </script> 
+        
+        <script> 
+
+            window.addEventListener('keydown',doKeyDown,true);
+            // agregamos el "listener" para "escuchar" los eventos del teclado
+            
+            var a= 0.00;
+			var c = 0.00;
+			var b = 0;
+			var x = 0.0;
+			var z = 23.0;
+			var y = 6;
+
+            
+            function doKeyDown(evt){
+                //console.log("Tecla presionada: "+evt.keyCode);
+                 switch (evt.keyCode) {
+                    case 38:  /* Up arrow pressed */                        
+						a = Math.sin(b)*1;
+						c = Math.cos(b)*1;
+						x -= a;
+						z -= c;
+                        break;
+                    case 40:  /* Down arrow pressed */
+						a = (Math.sin(b)*1);
+						c = (Math.cos(b)*1);
+						x += a;
+						z += c;
+                        break;
+                    case 37:  /* Left arrow pressed */
+						b += 0.05;
+                        break;
+                    case 39:  /* Right arrow pressed */
+						b -= 0.05;
+                        break;
+                    case 87:  /* W was pressed */
+                        y += .1;              
+                    break;
+                    case 83:  /* S was pressed */
+                         y -= .1;                    
+                    break;
+                    case 69:  /* E was pressed */
+                         
+                    break;
+                    case 68:  /* D was pressed */
+                        
+                    break;
+                }
+            }
+
+            // three basic components of a scene
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+
+
+            // create a new geometry
+            var geom = new THREE.Geometry(); 
+			var dist1 = 3;
+			var dist2 = 6;
+			var dist3 = 8;
+			var angulo = 0;
+			var vari = 0;
+            // push the box 3D points
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),(Math.sin(angulo)*(dist1)),1));
+				geom.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),(Math.sin(angulo)*(dist2)),1));
+				if(vari%2 != 0){
+				geom.vertices.push(new THREE.Vector3((dist3*Math.cos(angulo+.08)),(Math.sin(angulo+.08)*(dist3)),1));
+				console.log('mas');
+				}else if(vari % 2 == 0){
+				geom.vertices.push(new THREE.Vector3((dist3*Math.cos(angulo-.08)),(Math.sin(angulo-.08)*(dist3)),1));
+				console.log('menos');
+				}
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),(Math.sin(angulo)*(dist1)),-1));
+				geom.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),(Math.sin(angulo)*(dist2)),-1));
+				if(vari%2 != 0){
+				geom.vertices.push(new THREE.Vector3((dist3*Math.cos(angulo+.08)),(Math.sin(angulo+.08)*(dist3)),-1));
+				console.log('mas');
+				}else if(vari % 2 == 0){
+				geom.vertices.push(new THREE.Vector3((dist3*Math.cos(angulo-.08)),(Math.sin(angulo-.08)*(dist3)),-1));
+				console.log('menos');
+				}
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 8; i++){
+				geom.faces.push( new THREE.Face3( 0 + aumento, 1+ aumento, 4+ aumento ) );
+				geom.faces.push( new THREE.Face3( 0+ aumento, 4+ aumento, 3+ aumento	 ) );
+				geom.faces.push( new THREE.Face3( 1+ aumento, 2+ aumento, 5+ aumento	 ) );
+				geom.faces.push( new THREE.Face3( 1+ aumento, 5+ aumento, 4+ aumento	 ) );
+				if(i == 7){
+				geom.faces.push( new THREE.Face3( 45, 1, 0 ) );
+				geom.faces.push( new THREE.Face3( 45, 46, 1	 ) );
+				}else{
+				geom.faces.push( new THREE.Face3( 3+ aumento, 7+ aumento, 6+ aumento	 ) );
+				geom.faces.push( new THREE.Face3( 3+ aumento, 4+ aumento, 7+ aumento	 ) );
+				}
+				aumento += 6;
+			}
+			aumento = 48;
+			
+			for(var i = 0; i< 8; i++){
+				geom.faces.push( new THREE.Face3( 0 + aumento, 4+ aumento, 1+ aumento ) );
+				geom.faces.push( new THREE.Face3( 0+ aumento, 3+ aumento, 4+ aumento	 ) );
+				geom.faces.push( new THREE.Face3( 1+ aumento, 5+ aumento, 2+ aumento	 ) );
+				geom.faces.push( new THREE.Face3( 1+ aumento, 4+ aumento, 5+ aumento	 ) );
+				if(i == 7){
+				geom.faces.push( new THREE.Face3( 93, 48, 49 ) );
+				geom.faces.push( new THREE.Face3( 93, 49, 94 ) );
+				}else{
+				geom.faces.push( new THREE.Face3( 3+ aumento, 6+ aumento, 7+ aumento	 ) );
+				geom.faces.push( new THREE.Face3( 3+ aumento, 7+ aumento, 4+ aumento	 ) );
+				}
+				aumento += 6;
+			}
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				geom.faces.push( new THREE.Face3( 0, 48, 93 ) );
+				geom.faces.push( new THREE.Face3( 0, 93, 45 ) );
+				}else{
+				geom.faces.push( new THREE.Face3( 0 +aumento, 3+aumento, 51+aumento ) );
+				geom.faces.push( new THREE.Face3( 0+aumento, 51+aumento, 48+aumento ) );
+				}
+				
+				aumento += 3;
+			}
+            aumento = 0;
+            for(var i = 0; i<8; i++){
+				geom.faces.push( new THREE.Face3( 2+aumento, 1+aumento, 49+aumento ) );
+				geom.faces.push( new THREE.Face3( 2+aumento, 49+aumento, 50+aumento ) );
+				geom.faces.push( new THREE.Face3( 5+aumento, 2+aumento, 50+aumento ) );
+				geom.faces.push( new THREE.Face3( 5+aumento, 50+aumento, 53+aumento ) );
+				geom.faces.push( new THREE.Face3( 4+aumento, 5+aumento, 53+aumento ) );
+				geom.faces.push( new THREE.Face3( 4+aumento, 53+aumento, 52+aumento ) );
+				if(i==7){
+				geom.faces.push( new THREE.Face3( 1, 46, 94 ) );
+				geom.faces.push( new THREE.Face3( 1, 94, 49 ) );
+				}else{
+				geom.faces.push( new THREE.Face3( 7+aumento, 4+aumento, 52+aumento ) );
+				geom.faces.push( new THREE.Face3( 7+aumento, 52+aumento, 55+aumento ) );
+				}
+				aumento += 6;
+			}
+
+            geom.computeFaceNormals();
+
+
+            // create a Lambert material
+            var cosaMaterial = new THREE.MeshLambertMaterial({color: 0x00ff00, wireframe: false});
+
+            // create a wireframe material
+            var meshMaterial = new THREE.MeshLambertMaterial({color: 0xff0000, wireframe: false});
+			var meshMaterial2 = new THREE.MeshLambertMaterial({color: 0x0000ff, wireframe: false});
+
+            var object = new THREE.Mesh( geom, cosaMaterial);
+            var object2 = new THREE.Mesh( geom, meshMaterial);
+			var object3 = new THREE.Mesh( geom, meshMaterial2);
+
+            group = new THREE.Object3D();           // create an empty container
+			
+            group.add( object );                    // add a mesh with geometry to it
+            group.add( object2 );                   // add a mesh with geometry to it
+			group.add(object3);
+            
+            object2.position.x -=6.94;
+			object.position.x +=7;
+			object3.position.x +=7;
+			object3.position.y += 13.94;
+            scene.add( group );                     // add the group to the scene                  
+          
+			
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+
+            
+			camera.position.y = 10;
+
+            // create some point lights
+            var pointLight = new THREE.PointLight( 0xffffff );
+            var pointLight2 = new THREE.PointLight( 0xffffff );
+			
+
+            // set its position
+            pointLight.position.x = 10;
+            pointLight.position.y = 50;
+            pointLight.position.z = 130;
+
+            // add to the scene
+            scene.add(pointLight);
+            
+            // set its position
+            pointLight2.position.x = -20;
+            pointLight2.position.y = -50;
+            pointLight2.position.z = -130;
+
+            // add to the scene
+            scene.add(pointLight2);
+            
+		
+			
+            // set the background color
+            renderer.setClearColor(0x000022, 1);
+
+            var render = function () { 
+                requestAnimationFrame(render); 
+				camera.rotation.y = b;
+				camera.position.x = x;				
+				camera.position.z = z;
+				camera.position.y = y;
+                object.rotation.z += .005;
+				object2.rotation.z -= .005;
+				object3.rotation.z -= .005;
+                renderer.render(scene, camera); 
+            }; 
+
+            render();             
+        </script> 
+    </body> 
+</html>

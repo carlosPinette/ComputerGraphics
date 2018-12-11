@@ -1,0 +1,362 @@
+<html> 
+	<!-- 
+	Brazo robótico
+	Gráficas Computacionales
+	
+	Lupita Martínez Azmitia A01096776
+	Carlos Ramón Perera Pinette A01099559
+	
+	Navegación:	
+	W -- Moverse hacia arriba  
+	A -- Moverse hacia la izquierda
+	S -- Moverse hacia abajo
+	D -- Moverse hacia la derecha
+	
+	Flecha arriba -- Avanzar hacia adelante
+	Flecha derecha -- Girar en tu eje hacia la derecha
+	Flecha abajo -- Retroceder
+	Flecha izquierda -- Girar en tu eje hacia la izquierda
+	
+	Controles brazo robótico:
+	R -- Rota todo el brazo en -Z
+	F -- Rota todo el brazo en +Z
+	T -- Rota todo el brazo en -Y
+	G -- Rota todo el brazo en +Y
+	Y -- Rota el antebrazo en -Z
+	H -- Rota el antebrazo en +Z
+	U -- Rota la mano en -X
+	J -- Rota la mano en +X
+	I -- Abre la mano
+	K -- Cierra la mano
+	O -- Retrocede el carrito con el brazo
+	L -- Avanza el carrito con el brazo
+	<< P -- Activa hidráulica >>
+	
+	-->
+    <head> 
+        <title> Brazo Robotico </title> 
+        <style> 
+            canvas { width: 100%; height: 100% }
+        </style> 
+    </head> 
+    <body> 
+        <script src="three.min.js"> </script> 
+        <script> 
+			
+            window.addEventListener('keydown',doKeyDown,true);
+            var cam_zpos = 10.0;
+            var cam_xpos = 0.0;
+            var Pi = 3.14159265358;
+            // x grados a radianes -        x * Pi / 180
+            // x radianes a grados -        x * 180 / Pi
+            var ang_rad = 0;
+			var y = 2.3;
+			var contador = 1;
+
+            function doKeyDown(evt){
+                console.log("Tecla picada: "+evt.keyCode);
+                switch (evt.keyCode) {
+                    case 38:  /* Up arrow was pressed */                        
+                        var dx = 0.5 * Math.sin(ang_rad); 
+                        var dz = 0.5 * Math.cos(ang_rad); 
+                        cam_zpos -= dz;
+                        cam_xpos -= dx;
+                        break;
+                    case 40:  /* Down arrow was pressed */                        
+                        var dx = 0.5 * Math.sin(ang_rad); 
+                        var dz = 0.5 * Math.cos(ang_rad); 
+                        cam_zpos += dz;
+                        cam_xpos += dx;
+                        break;
+                    case 37:  /* Left arrow was pressed */                        
+                        ang_rad += (5* Pi / 180);
+                        break;
+                    case 39:  /* Right arrow was pressed */
+                        ang_rad -= (5* Pi / 180);                        
+                        break;
+
+                    
+
+                    /* - - - - - - - Controls - - - - - - - */
+                    case 74: /*J pressed  - - - */
+                        gpinza.rotation.y-=.1;
+                    break;
+                    case 85: /*U pressed  - - - */
+                        gpinza.rotation.y+=.1;                    
+                    break;
+                    case 70: /*F pressed  - - - */
+						if(gbrazo.rotation.z > -.9)
+                        gbrazo.rotation.z-=.1;
+                    break;
+					case 87:  /* W was pressed */
+                        y += .05;              
+                    break;
+                    case 83:  /* S was pressed */
+                         y -= .05; 
+					break;
+                    case 82: /*R pressed  - - - */
+						if(gbrazo.rotation.z < .9)
+                        gbrazo.rotation.z+=.1;							
+                    break;
+                    case 84: /*T pressed  - - - */
+                        ghombro.rotation.y+=.1;
+                    break;
+                    case 89: /*Y pressed  - - - */
+						if(gantebrazo.rotation.z < 1.4)
+                        gantebrazo.rotation.z+=.1;						
+                    break;
+                    case 71: /*G pressed  - - - */
+                         ghombro.rotation.y-=.1;
+                    break;
+                    case 72: /*H pressed  - - - */
+					if(gantebrazo.rotation.z > -1.4)
+                        gantebrazo.rotation.z-=.1;						
+                    break;
+                    case 73: /*I pressed  - - - */
+						if(gpinzad.rotation.z > -0.7 ){
+                        gpinzai.rotation.z+=.1;
+						gpinzad.rotation.z-=.1;
+						}
+                    break;
+                    case 75: /*K pressed  - - - */
+						if(gpinzad.rotation.z < 0.1 ){
+						gpinzai.rotation.z-=.1;
+						gpinzad.rotation.z+=.1;
+						}                   
+                    break;
+                    case 65: /*A pressed  - - - */
+                       cam_xpos -= .05; 
+                    break;
+                    case 68: /*D pressed  - - - */
+                        cam_xpos += .05;                 
+                    break;
+					case 79: /*O pressed  - - - */
+						llanta1.rotation.y += .1;
+						llanta2.rotation.y += .1;
+						llanta3.rotation.y += .1;
+						llanta4.rotation.y += .1;
+						gcarro.position.x -= .1;
+                    break;
+                    case 76: /*L pressed  - - - */
+                        llanta1.rotation.y -= .1;
+						llanta2.rotation.y -= .1;
+						llanta3.rotation.y -= .1;
+						llanta4.rotation.y -= .1; 
+						gcarro.position.x += .1;
+                    break;
+					case 80: /*P pressed  - - - */
+                       contador++;
+						if(contador%2!=0)
+						jumper.position.y += .2;
+						else
+						jumper.position.y -= .2; 
+                    break;
+
+                }
+            }
+            
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+			
+			var audio = document.createElement('audio');
+			var source = document.createElement('source');
+			source.src = 'music1.mp3';
+			audio.appendChild(source);
+			audio.play();
+            
+            var redMaterial = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("gold.jpg")});
+			var blackMaterial = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("darkmetal.jpg")});
+			var grayMaterial = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("metal.jpg")});
+			var tireMaterial = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("tire.jpg")});
+			var diaMaterial = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("diamond.jpg")});
+            /*Creacion de los grupos*/
+			gcarro = new THREE.Object3D();
+            gbrazo = new THREE.Object3D();
+            gantebrazo = new THREE.Object3D();
+            gpinzad = new THREE.Object3D();
+            gpinzai = new THREE.Object3D();
+			gpinza = new THREE.Object3D();
+			ghombro = new THREE.Object3D();
+			gllantas = new THREE.Object3D(); 
+			jumper = new THREE.Object3D(); 
+            
+
+            var carrito = new THREE.Mesh(new THREE.CubeGeometry(4,2,3), diaMaterial);
+			
+			var base = new THREE.Mesh(new THREE.CylinderGeometry(1,1,1,16,3,false), blackMaterial);
+			base.position.y += 1.5;
+			var base1 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), blackMaterial);
+			base1.rotation.x += 3.1416/2;
+			base1.position.y += 2.05;
+			base1.position.z += .2;
+			var base2 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), blackMaterial);
+			base2.rotation.x += 3.1416/2;
+			base2.position.y += 2.05;
+			base2.position.z -= .2;
+			var brazo1 = new THREE.Mesh(new THREE.CubeGeometry(1.4,3,.21), redMaterial);
+			brazo1.position.y += 2.1;
+			var base3 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), redMaterial);
+			base3.rotation.x += 3.1416/2;
+			base3.position.y += .55;
+			var perno1 = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.9,16,4,false), grayMaterial);
+			perno1.rotation.x += 3.1416/2;
+			perno1.position.y += 2.35;
+			var base4 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), redMaterial);
+			base4.rotation.x += 3.1416/2;
+			base4.position.y += 3.55;
+			var base5 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), blackMaterial);
+			base5.rotation.x += 3.1416/2;
+			base5.position.y += 0.4;
+			base5.position.z += .2;
+			var base6 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), blackMaterial);
+			base6.rotation.x += 3.1416/2;
+			base6.position.y += 0.4;
+			base6.position.z -= .2;
+			var brazo2 = new THREE.Mesh(new THREE.CubeGeometry(1.4,2,.61), blackMaterial);
+			brazo2.position.y += 1.4;
+			var perno2 = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.9,16,4,false), grayMaterial);
+			perno2.rotation.x += 3.1416/2;
+			perno2.position.y += 0;
+			var base7 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), blackMaterial);
+			base7.rotation.x += 3.1416/2;
+			base7.position.y += 2.4;
+			base7.position.z += .2;
+			var base8 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), blackMaterial);
+			base8.rotation.x += 3.1416/2;
+			base8.position.y += 2.4;
+			base8.position.z -= .2;
+			var base9 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), redMaterial);
+			base9.rotation.x += 3.1416/2;
+			base9.position.y += 3.2;
+			var perno3 = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,.9,16,4,false), grayMaterial);
+			perno3.rotation.x += 3.1416/2;
+			perno3.position.y += 2.8;
+			var pinza1 = new THREE.Mesh(new THREE.CubeGeometry(.4,1,.2), grayMaterial);
+			pinza1.position.y -= 0;
+			pinza1.position.x -= .65;
+			pinza1.rotation.z += 3.1416/4;
+			var pinza2 = new THREE.Mesh(new THREE.CubeGeometry(.4,1,.2), grayMaterial);
+			pinza2.position.y += 0;
+			pinza2.position.x += .65;
+			pinza2.rotation.z -= 3.1416/4;
+			var upinza1 = new THREE.Mesh(new THREE.CubeGeometry(.41,1,.21), grayMaterial);
+			upinza1.position.y += .52;
+			upinza1.position.x -= .7;
+			upinza1.rotation.z -= .55;
+			var upinza2 = new THREE.Mesh(new THREE.CubeGeometry(.41,1,.21), grayMaterial);
+			upinza2.position.y += 0.52;
+			upinza2.position.x += .7;
+			upinza2.rotation.z += .55;
+			var esfera = new THREE.Mesh(new THREE.SphereGeometry( .5, 16, 16, false ), blackMaterial);
+			esfera.position.y += 9.5;
+			var basepinza = new THREE.Mesh(new THREE.CylinderGeometry(.1,.1,1,16,3,false), grayMaterial);
+			basepinza.position.y += 3.9;
+			var llanta1 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), tireMaterial);
+			llanta1.position.z += 1.6;
+			llanta1.rotation.x += 3.1416/2;
+			llanta1.position.x += 1.6;
+			var llanta2 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), tireMaterial);
+			llanta2.position.z += 1.6;
+			llanta2.rotation.x += 3.1416/2;
+			llanta2.position.x -= 1.6;
+			var llanta3 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), tireMaterial);
+			llanta3.position.z -= 1.6;
+			llanta3.rotation.x += 3.1416/2;
+			llanta3.position.x -= 1.6;
+			var llanta4 = new THREE.Mesh(new THREE.CylinderGeometry(.7,.7,.2,16,4,false), tireMaterial);
+			llanta4.position.z -= 1.6;
+			llanta4.rotation.x += 3.1416/2;
+			llanta4.position.x += 1.6;
+			
+			gpinzai.add(pinza1);
+			gpinzai.add(upinza1);
+			gpinzai.position.y += 9.8;
+			gpinzai.position.x += .1;
+			gpinzad.add(pinza2);
+			gpinzad.add(upinza2);
+			gpinzad.position.y += 9.8;
+			gpinzad.position.x -= .1;
+			gpinza.add(gpinzad);
+			gpinza.add(gpinzai);
+			gpinza.add(esfera);
+			gpinza.position.y -= 4.7;
+			gantebrazo.add(gpinza);
+			gantebrazo.add(basepinza);
+			gantebrazo.add(base9);
+			gantebrazo.add(base8);
+			gantebrazo.add(base7);
+			gantebrazo.add(brazo2);
+			gantebrazo.add(base5);
+			gantebrazo.add(base6);
+			gantebrazo.add(perno2);
+			gantebrazo.add(perno3);
+			gantebrazo.position.y += 4.1;
+			gantebrazo.rotation.z-=1.1;
+			gbrazo.add(gantebrazo);
+			gbrazo.add(brazo1);
+			gbrazo.add(base3);
+			gbrazo.add(base4);
+			gbrazo.position.y += 2.3;
+			gbrazo.rotation.z-=.6;
+			ghombro.add(gbrazo)
+			ghombro.add(base);
+			ghombro.add(base1);
+			ghombro.add(base2);
+			ghombro.add(perno1);
+			
+			
+			gllantas.add(llanta1);
+			gllantas.add(llanta2);
+			gllantas.add(llanta3);
+			gllantas.add(llanta4);
+			gllantas.position.y -= .6;
+			
+			
+			gcarro.add(gllantas);
+			jumper.add(carrito);
+			jumper.add(ghombro);
+			gcarro.add(jumper);
+            group = new THREE.Object3D();
+
+            group.add(gcarro);
+
+            scene.add( group );
+            
+            camera.position.y = 0;
+            camera.position.z = cam_zpos; 
+
+            // create a point light
+            var pointLight = new THREE.PointLight( 0xFFFFFF );
+            pointLight.position.x = 150;
+            pointLight.position.y = 50;
+            pointLight.position.z = 130;
+
+            var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+            pointLight2.position.x = -150;
+            pointLight2.position.y = -50;
+            pointLight2.position.z = -130;
+
+            scene.add(pointLight);
+            scene.add(pointLight2);
+            
+			
+            
+            renderer.setClearColor(0x000022, 1);
+            var render = function () { 
+                requestAnimationFrame(render); 
+				
+                camera.position.z = cam_zpos; 
+                camera.position.x = cam_xpos; 
+                camera.rotation.y = ang_rad;  
+				camera.position.y = y;
+                renderer.render(scene, camera); 
+            }; 
+            render(); 
+
+            
+        </script> 
+    </body> 
+</html>

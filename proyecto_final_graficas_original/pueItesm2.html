@@ -1,0 +1,3272 @@
+﻿	<!--
+		Lupita Martinez Azmitia A01096776
+		Carlos Ramón Perera Pinette A01099559
+		
+		Gráficas Computacionales
+		
+		Tecnológico de Monterrey Campus Puebla con X-Wing
+		
+			****Controles de cámara****
+		
+			ASCENDER            (W) 
+            DESCENDER           (S)
+            despl. DERECHA      (D)
+            despl. IZQUIERDA    (A)
+			
+			Flecha arriba -- Avanzar hacia adelante
+			Flecha derecha -- Girar en tu eje hacia la derecha
+			Flecha abajo -- Retroceder
+			Flecha izquierda -- Girar en tu eje hacia la izquierda
+			
+			****Controles X-Wing****
+			avanzar                   			<T>
+			retroceder                 	 		<G>
+			girar a la derecha                  <H>
+			girar a la izquierda                <F>
+			desplazarse a la derecha            <Y>
+			desplazarse a la izquierda          <R>
+			ascender                            <V>
+			descender                           <B>
+			abrir alas                      	<U>
+			cerrar alas                     	<J>
+			abrir cabina                        <I>
+			cerrar cabina                       <K>
+			
+	-->
+<html> 
+    <head> 
+        <title>  Tec de Monterrey Campus Puebla  </title> 
+        <style> 
+            canvas { width: 100%; height: 100% }
+        </style> 
+    </head> 
+    <body> 
+        <script src="three.min.js"> </script> 
+        
+        <script> 
+			
+            window.addEventListener('keydown',doKeyDown,true);
+            // agregamos el "listener" para "escuchar" los eventos del teclado
+            
+             var cam_zpos = 10.0;
+            var cam_xpos = 0.0;
+			var x_zpos = 0;
+			var x_xpos = 0;
+            var Pi = 3.14159265358;
+            // x grados a radianes -        x * Pi / 180
+            // x radianes a grados -        x * 180 / Pi
+            var ang_rad = 0;
+			var y = 2.3;
+			var z = 10.0;
+            
+            function doKeyDown(evt){
+                //console.log("Tecla presionada: "+evt.keyCode);
+                 switch (evt.keyCode) {
+                    case 38:  /* Up arrow was pressed */                        
+                        var dx = 1.5 * Math.sin(ang_rad); 
+                        var dz = 1.5 * Math.cos(ang_rad); 
+                        cam_zpos -= dz;
+                        cam_xpos -= dx;
+                        break;
+                    case 40:  /* Down arrow was pressed */                        
+                        var dx = 1.5 * Math.sin(ang_rad); 
+                        var dz = 1.5 * Math.cos(ang_rad); 
+                        cam_zpos += dz;
+                        cam_xpos += dx;
+                        break;
+                    case 37:  /* Left arrow was pressed */                        
+                        ang_rad += (5* Pi / 180);
+                        break;
+                    case 39:  /* Right arrow was pressed */
+                        ang_rad -= (5* Pi / 180);                        
+                        break;
+                    case 87:  /* W was pressed */
+                        y += 1;              
+                    break;
+                    case 83:  /* S was pressed */
+                         y -= 1;                    
+                    break;
+                    case 65: /*A pressed  - - - */
+                       var dx = 1.5 * Math.sin(ang_rad+1.57); 
+                        var dz = 1.5 * Math.cos(ang_rad+1.57); 
+                        cam_zpos -= dz;
+                        cam_xpos -= dx;
+                    break;
+                    case 68: /*D pressed  - - - */
+                       var dx = 1.5 * Math.sin(ang_rad+1.57); 
+                        var dz = 1.5 * Math.cos(ang_rad+1.57); 
+                        cam_zpos += dz;
+                        cam_xpos += dx;                
+                    break;
+					case 85: /*U pressed  - - - */
+					console.log(gala.rotation.x);
+						if(gala.rotation.x > -.3){
+                        gala.rotation.x-=.1; 
+						gala2.rotation.x+=.1; 						
+						gala3.rotation.x+=.1; 
+						gala4.rotation.x-=.1; 
+						}
+                    break;	
+					case 74: /*J pressed  - - - */
+					console.log(gala.rotation.x);
+						if(gala.rotation.x < -0.1){
+                        gala.rotation.x+=.1; 
+						gala2.rotation.x-=.1; 						
+						gala3.rotation.x-=.1; 
+						gala4.rotation.x+=.1;
+						}
+                    break;
+					case 73: /*I pressed  - - - */
+						if(gcabina.rotation.z < 0.81 ){
+						console.log(gcabina.rotation.z);
+                        gcabina.rotation.z += .1;
+						}
+                    break;
+                    case 75: /*K pressed  - - - */
+						if(gcabina.rotation.z > 0.01 ){
+						console.log(gcabina.rotation.z);
+						gcabina.rotation.z -= .1;
+						}                   
+                    break;
+					case 72: /*H pressed  - - - */
+                        xwing.rotation.y-=.1;						
+                    break;
+					case 70: /*F pressed  - - - */
+                        xwing.rotation.y+=.1;
+                    break;
+					case 86: /*V pressed  - - - */
+                        xwing.position.y+=.1;
+                    break;
+					case 66: /*B pressed  - - - */
+                        xwing.position.y-=.1;
+                    break;
+					case 84: /*T pressed  - - - */
+						var dix = .5 * Math.sin(xwing.rotation.y - 1.5707); 
+                        var diz = .5 * Math.cos(xwing.rotation.y - 1.5707);
+						x_zpos -= diz;
+                        x_xpos -= dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;
+						
+                    break;
+					case 71: /*G pressed  - - - */
+                        var dix = .5 * Math.sin(xwing.rotation.y - 1.5707); 
+                        var diz = .5 * Math.cos(xwing.rotation.y - 1.5707);
+						x_zpos += diz;
+                        x_xpos += dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;
+                    break;
+					case 89: /*Y pressed  - - - */
+						var dix = .5 * Math.sin(xwing.rotation.y); 
+                        var diz = .5 * Math.cos(xwing.rotation.y);
+						x_zpos += diz;
+                        x_xpos += dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;						
+                    break;
+					case 82: /*R pressed  - - - */
+						var dix = .5 * Math.sin(xwing.rotation.y); 
+                        var diz = .5 * Math.cos(xwing.rotation.y);
+						x_zpos -= diz;
+                        x_xpos -= dix;
+                        xwing.position.x =x_xpos;
+						xwing.position.z = x_zpos;						
+                    break;
+                }
+            }
+			
+			
+        
+           
+            // three basic components of a scene
+            var scene = new THREE.Scene(); 
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.01, 1000); 
+            var renderer = new THREE.WebGLRenderer(); 
+
+			var audio = document.createElement('audio');
+			var source = document.createElement('source');
+			source.src = 'music1.mp3';
+			audio.appendChild(source);
+			audio.play();
+			
+			var geomv = new THREE.Geometry();
+			var geom2v = new THREE.Geometry();
+			var geom3v = new THREE.Geometry();
+			var geom4v = new THREE.Geometry();
+			
+			//puntos cabina
+			geomv.vertices.push(new THREE.Vector3( 4.2,1.6,-1.35));   // index 0
+			geomv.vertices.push(new THREE.Vector3( 4.2,1.6,1.35));   // index 1
+			geomv.vertices.push(new THREE.Vector3( 3.8,1.6,-1.35));   // index 2
+			geomv.vertices.push(new THREE.Vector3( 3.8,1.6,1.35));   // index 3
+			geomv.vertices.push(new THREE.Vector3( 4,2.5,-1.25));   // index 4
+			geomv.vertices.push(new THREE.Vector3( 4,2.5,1.25));   // index 5
+			
+			geom2v.vertices.push(new THREE.Vector3( 4.2,1.6,-1.35));   // index 0
+			geom2v.vertices.push(new THREE.Vector3( 4.2,1.6,1.35));   // index 1
+			geom2v.vertices.push(new THREE.Vector3( 3.8,1.6,-1.35));   // index 2
+			geom2v.vertices.push(new THREE.Vector3( 3.8,1.6,1.35));   // index 3
+			geom2v.vertices.push(new THREE.Vector3( 4,2.5,-1.25));   // index 4
+			geom2v.vertices.push(new THREE.Vector3( 4,2.5,1.25));   // index 5
+			geom2v.vertices.push(new THREE.Vector3( 9,1.6,-1.15));   // index 6
+			geom2v.vertices.push(new THREE.Vector3( 9,1.6,1.15));   // index 7
+			
+			geom3v.vertices.push(new THREE.Vector3(19,1.47,.57)); //0
+			geom3v.vertices.push(new THREE.Vector3(19,1.47,-.57)); //1
+			geom3v.vertices.push(new THREE.Vector3(19,-1,.5)); //2
+			geom3v.vertices.push(new THREE.Vector3(19,-1,-.5)); //3
+			geom3v.vertices.push(new THREE.Vector3(19,-.2,1)); //4
+			geom3v.vertices.push(new THREE.Vector3(19,-.2,-1)); //5
+			geom3v.vertices.push(new THREE.Vector3(24,0.4,.4)); //6
+			geom3v.vertices.push(new THREE.Vector3(24,0.4,-.4)); //7
+			
+			geom4v.vertices.push(new THREE.Vector3(-1.9,1.4,3.1)); //0
+			geom4v.vertices.push(new THREE.Vector3(1.9,1.4,3.1)); //1
+			geom4v.vertices.push(new THREE.Vector3(-1.9,2.4,3.1)); //2
+			geom4v.vertices.push(new THREE.Vector3(1.9,2.4,3.1)); //3
+			geom4v.vertices.push(new THREE.Vector3(-1.9,1.4,6.6)); //4
+			geom4v.vertices.push(new THREE.Vector3(1.9,1.4,6.6)); //5
+			
+			geom4v.faces.push(new THREE.Face3(3,5,1));
+			geom4v.faces.push(new THREE.Face3(3,2,5));
+			geom4v.faces.push(new THREE.Face3(2,4,5));
+			geom4v.faces.push(new THREE.Face3(2,0,4));
+			
+			geom3v.faces.push(new THREE.Face3(0,4,6));
+			geom3v.faces.push(new THREE.Face3(4,2,6));
+			geom3v.faces.push(new THREE.Face3(0,6,7));
+			geom3v.faces.push(new THREE.Face3(0,7,1));
+			geom3v.faces.push(new THREE.Face3(1,7,5));
+			geom3v.faces.push(new THREE.Face3(5,7,3));
+			geom3v.faces.push(new THREE.Face3(6,2,7));
+			geom3v.faces.push(new THREE.Face3(7,2,3));
+			
+			geom3v.faces.push(new THREE.Face3(0,6,4));
+			geom3v.faces.push(new THREE.Face3(4,6,2));
+			geom3v.faces.push(new THREE.Face3(0,7,6));
+			geom3v.faces.push(new THREE.Face3(0,1,7));
+			geom3v.faces.push(new THREE.Face3(1,5,7));
+			geom3v.faces.push(new THREE.Face3(5,3,7));
+			geom3v.faces.push(new THREE.Face3(6,7,2));
+			geom3v.faces.push(new THREE.Face3(7,3,2));
+			
+			geomv.faces.push( new THREE.Face3( 0,2,4 ) );
+			geomv.faces.push( new THREE.Face3( 0,3,2 ) );
+			geomv.faces.push( new THREE.Face3( 1,3,0 ) );
+			geomv.faces.push( new THREE.Face3( 5,3,1 ) );
+			geomv.faces.push( new THREE.Face3( 5,4,3 ) );
+			geomv.faces.push( new THREE.Face3( 3,4,2 ) );
+			
+			geomv.faces.push( new THREE.Face3( 0,4,2 ) );
+			geomv.faces.push( new THREE.Face3( 5,1,3 ) );
+			geomv.faces.push( new THREE.Face3( 5,3,4 ) );
+			geomv.faces.push( new THREE.Face3( 3,2,4 ) );
+			
+			
+			geom2v.faces.push( new THREE.Face3( 6,0,4 ) );
+			geom2v.faces.push( new THREE.Face3( 7,6,5 ) );
+			geom2v.faces.push( new THREE.Face3( 6,4,5 ) );
+			geom2v.faces.push(new THREE.Face3(7,5,1));
+			
+			geom2v.faces.push( new THREE.Face3( 6,4,0 ) );
+			geom2v.faces.push( new THREE.Face3( 7,5,6 ) );
+			geom2v.faces.push( new THREE.Face3( 6,5,4 ) );
+			geom2v.faces.push(new THREE.Face3(7,1,5));		
+			
+			geomv.computeFaceNormals();
+			geom2v.computeFaceNormals();
+			geom3v.computeFaceNormals();
+			geom4v.computeFaceNormals();
+			
+			
+			
+			gala = new THREE.Object3D();
+			gala2 = new THREE.Object3D();
+			gala3 = new THREE.Object3D();
+			gala4 = new THREE.Object3D();
+			gcabina = new THREE.Object3D();
+			xwing = new THREE.Object3D();
+			
+            // create a new geometry
+            var geom = new THREE.Geometry(); 
+			var geoma = new THREE.Geometry(); 
+			var geoma2 = new THREE.Geometry(); 
+			var geom0 = new THREE.Geometry(); 
+			var geom2 = new THREE.Geometry(); 
+			var geom3 = new THREE.Geometry();
+			var geom5 = new THREE.Geometry();
+			var geom6 = new THREE.Geometry();
+			var geom7 = new THREE.Geometry();			
+			var dist1 = 21.5;
+			var dist2 = 24;
+			
+			var angulo = 0;
+			var vari = 0;
+            // push the box 3D points
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom0.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),9,(Math.sin(angulo)*(dist1))));
+				geom0.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),9,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom0.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),0,(Math.sin(angulo)*(dist1))));
+				geom0.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),0,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 16; i++){
+				
+				if(i == 15){
+				
+				}else{
+				geom0.faces.push( new THREE.Face3( 0 + aumento, 3+ aumento, 1+ aumento ) );
+				geom0.faces.push( new THREE.Face3( 0+ aumento, 2+ aumento, 3+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			aumento = 0;
+			
+			for(var i = 0; i< 16; i++){
+				if(i == 15){
+				
+				}else{
+				geom0.faces.push( new THREE.Face3( 32 + aumento, 33+ aumento, 35+ aumento ) );
+				geom0.faces.push( new THREE.Face3( 32+ aumento, 35+ aumento, 34+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				
+				}else{
+				geom0.faces.push( new THREE.Face3( 0 +aumento, 32+aumento, 34+aumento ) );
+				geom0.faces.push( new THREE.Face3( 0+aumento, 34+aumento, 2+aumento ) );
+				geom0.faces.push( new THREE.Face3( 1 +aumento, 3+aumento, 35+aumento ) );
+				geom0.faces.push( new THREE.Face3( 1+aumento, 35+aumento, 33+aumento ) );
+				}
+				
+				aumento += 2;
+			}
+
+            geom0.computeFaceNormals();
+			angulo = 0;
+			dist1 = 30.5;
+			dist2 = 27;
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom5.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),3,(Math.sin(angulo)*(dist1))));
+				geom5.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),3,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom5.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),0,(Math.sin(angulo)*(dist1))));
+				geom5.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),0,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 16; i++){
+				
+				if(i == 15){
+				geom5.faces.push( new THREE.Face3( 30, 31, 1 ) );
+				geom5.faces.push( new THREE.Face3( 30, 1, 0 ) );
+				}else{
+				geom5.faces.push( new THREE.Face3( 0 + aumento, 1+ aumento, 3+ aumento ) );
+				geom5.faces.push( new THREE.Face3( 0+ aumento, 3+ aumento, 2+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			aumento = 0;
+			
+			for(var i = 0; i< 16; i++){
+				if(i == 15){
+				geom5.faces.push( new THREE.Face3( 62, 33,63 ) );
+				geom5.faces.push( new THREE.Face3( 62, 32, 33 ) );
+				}else{
+				geom5.faces.push( new THREE.Face3( 32 + aumento, 35+ aumento, 33+ aumento ) );
+				geom5.faces.push( new THREE.Face3( 32+ aumento, 34+ aumento, 35+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				geom5.faces.push( new THREE.Face3( 30, 0, 32 ) );
+				geom5.faces.push( new THREE.Face3( 30, 32, 62 ) );
+				
+				geom5.faces.push( new THREE.Face3( 31, 33, 1 ) );
+				geom5.faces.push( new THREE.Face3( 31, 63, 33 ) );
+				}else{
+				geom5.faces.push( new THREE.Face3( 0 +aumento, 34+aumento, 32+aumento ) );
+				geom5.faces.push( new THREE.Face3( 0+aumento, 2+aumento, 34+aumento ) );
+				geom5.faces.push( new THREE.Face3( 1 +aumento, 35+aumento, 3+aumento ) );
+				geom5.faces.push( new THREE.Face3( 1+aumento, 33+aumento, 35+aumento ) );
+				}
+				
+				aumento += 2;
+			}
+
+			geom5.computeFaceNormals();
+			
+			angulo = 0;
+			dist1 = 30.5;
+			dist2 = 27;
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom6.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),9,(Math.sin(angulo)*(dist1))));
+				geom6.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),9,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom6.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),0,(Math.sin(angulo)*(dist1))));
+				geom6.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),0,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 16; i++){
+				
+				if(i == 15){
+				geom6.faces.push( new THREE.Face3( 30, 31, 1 ) );
+				geom6.faces.push( new THREE.Face3( 30, 1, 0 ) );
+				}else{
+				geom6.faces.push( new THREE.Face3( 0 + aumento, 1+ aumento, 3+ aumento ) );
+				geom6.faces.push( new THREE.Face3( 0+ aumento, 3+ aumento, 2+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			aumento = 0;
+			
+			for(var i = 0; i< 16; i++){
+				if(i == 15){
+				geom6.faces.push( new THREE.Face3( 62, 33,63 ) );
+				geom6.faces.push( new THREE.Face3( 62, 32, 33 ) );
+				}else{
+				geom6.faces.push( new THREE.Face3( 32 + aumento, 35+ aumento, 33+ aumento ) );
+				geom6.faces.push( new THREE.Face3( 32+ aumento, 34+ aumento, 35+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				geom6.faces.push( new THREE.Face3( 30, 0, 32 ) );
+				geom6.faces.push( new THREE.Face3( 30, 32, 62 ) );
+				
+				geom6.faces.push( new THREE.Face3( 31, 33, 1 ) );
+				geom6.faces.push( new THREE.Face3( 31, 63, 33 ) );
+				}else{
+				geom6.faces.push( new THREE.Face3( 0 +aumento, 34+aumento, 32+aumento ) );
+				geom6.faces.push( new THREE.Face3( 0+aumento, 2+aumento, 34+aumento ) );
+				geom6.faces.push( new THREE.Face3( 1 +aumento, 35+aumento, 3+aumento ) );
+				geom6.faces.push( new THREE.Face3( 1+aumento, 33+aumento, 35+aumento ) );
+				}
+				
+				aumento += 2;
+			}
+
+			geom6.computeFaceNormals();
+			
+			
+			angulo = 0;
+			dist1 = 30;
+			dist2 = 28;
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom7.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),14,(Math.sin(angulo)*(dist1))));
+				geom7.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),14,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom7.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),0,(Math.sin(angulo)*(dist1))));
+				geom7.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),0,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 16; i++){
+				
+				if(i == 15){
+				geom7.faces.push( new THREE.Face3( 30, 31, 1 ) );
+				geom7.faces.push( new THREE.Face3( 30, 1, 0 ) );
+				}else{
+				geom7.faces.push( new THREE.Face3( 0 + aumento, 1+ aumento, 3+ aumento ) );
+				geom7.faces.push( new THREE.Face3( 0+ aumento, 3+ aumento, 2+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			aumento = 0;
+			
+			for(var i = 0; i< 16; i++){
+				if(i == 15){
+				geom7.faces.push( new THREE.Face3( 62, 33,63 ) );
+				geom7.faces.push( new THREE.Face3( 62, 32, 33 ) );
+				}else{
+				geom7.faces.push( new THREE.Face3( 32 + aumento, 35+ aumento, 33+ aumento ) );
+				geom7.faces.push( new THREE.Face3( 32+ aumento, 34+ aumento, 35+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				geom7.faces.push( new THREE.Face3( 30, 0, 32 ) );
+				geom7.faces.push( new THREE.Face3( 30, 32, 62 ) );
+				
+				geom7.faces.push( new THREE.Face3( 31, 33, 1 ) );
+				geom7.faces.push( new THREE.Face3( 31, 63, 33 ) );
+				}else{
+				geom7.faces.push( new THREE.Face3( 0 +aumento, 34+aumento, 32+aumento ) );
+				geom7.faces.push( new THREE.Face3( 0+aumento, 2+aumento, 34+aumento ) );
+				geom7.faces.push( new THREE.Face3( 1 +aumento, 35+aumento, 3+aumento ) );
+				geom7.faces.push( new THREE.Face3( 1+aumento, 33+aumento, 35+aumento ) );
+				}
+				
+				aumento += 2;
+			}
+
+			geom7.computeFaceNormals();
+			
+			angulo = 0;
+			dist1 = 0;
+			dist2 = 23.5;
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom2.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),4,(Math.sin(angulo)*(dist1))));
+				geom2.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),4,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom2.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),0,(Math.sin(angulo)*(dist1))));
+				geom2.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),0,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 16; i++){
+				
+				if(i == 15){
+				geom2.faces.push( new THREE.Face3( 30, 1, 31 ) );
+				geom2.faces.push( new THREE.Face3( 30, 0, 1 ) );
+				}else{
+				geom2.faces.push( new THREE.Face3( 0 + aumento, 3+ aumento, 1+ aumento ) );
+				geom2.faces.push( new THREE.Face3( 0+ aumento, 2+ aumento, 3+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			aumento = 0;
+			
+			for(var i = 0; i< 16; i++){
+				if(i == 15){
+				geom2.faces.push( new THREE.Face3( 62, 63,33 ) );
+				geom2.faces.push( new THREE.Face3( 62, 33, 32 ) );
+				}else{
+				geom2.faces.push( new THREE.Face3( 32 + aumento, 33+ aumento, 35+ aumento ) );
+				geom2.faces.push( new THREE.Face3( 32+ aumento, 35+ aumento, 34+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				geom2.faces.push( new THREE.Face3( 30, 32, 0 ) );
+				geom2.faces.push( new THREE.Face3( 30, 62, 32 ) );
+				
+				geom2.faces.push( new THREE.Face3( 31, 1, 33 ) );
+				geom2.faces.push( new THREE.Face3( 31, 33, 63 ) );
+				}else{
+				geom2.faces.push( new THREE.Face3( 0 +aumento, 32+aumento, 34+aumento ) );
+				geom2.faces.push( new THREE.Face3( 0+aumento, 34+aumento, 2+aumento ) );
+				geom2.faces.push( new THREE.Face3( 1 +aumento, 3+aumento, 35+aumento ) );
+				geom2.faces.push( new THREE.Face3( 1+aumento, 35+aumento, 33+aumento ) );
+				}
+				
+				aumento += 2;
+			}
+
+			geom2.computeFaceNormals();
+			angulo = 0;
+			dist1 = 21.5;
+			dist2 = 23.5;
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom3.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),2,(Math.sin(angulo)*(dist1))));
+				geom3.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),2,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			vari = 0;
+			angulo = 0;
+			
+			for(var i=0; i<16; i++){
+				vari++;
+				
+				geom3.vertices.push(new THREE.Vector3((dist1*Math.cos(angulo)),0,(Math.sin(angulo)*(dist1))));
+				geom3.vertices.push(new THREE.Vector3((dist2*Math.cos(angulo)),0,(Math.sin(angulo)*(dist2))));
+				
+				console.log(angulo);
+				angulo += 0.392699082;
+				
+			}
+			
+			var aumento = 0;
+			for(var i = 0; i< 16; i++){
+				
+				if(i == 15){
+				
+				}else{
+				geom3.faces.push( new THREE.Face3( 0 + aumento, 3+ aumento, 1+ aumento ) );
+				geom3.faces.push( new THREE.Face3( 0+ aumento, 2+ aumento, 3+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			aumento = 0;
+			
+			for(var i = 0; i< 16; i++){
+				if(i == 15){
+				
+				}else{
+				geom3.faces.push( new THREE.Face3( 32 + aumento, 33+ aumento, 35+ aumento ) );
+				geom3.faces.push( new THREE.Face3( 32+ aumento, 35+ aumento, 34+ aumento	 ) );
+				}
+				aumento += 2;
+			}
+			
+			aumento = 0;
+			for(var i = 0; i < 16; i++){
+				if(i == 15){
+				
+				}else{
+				geom3.faces.push( new THREE.Face3( 0 +aumento, 32+aumento, 34+aumento ) );
+				geom3.faces.push( new THREE.Face3( 0+aumento, 34+aumento, 2+aumento ) );
+				geom3.faces.push( new THREE.Face3( 1 +aumento, 3+aumento, 35+aumento ) );
+				geom3.faces.push( new THREE.Face3( 1+aumento, 35+aumento, 33+aumento ) );
+				}
+				
+				aumento += 2;
+			}
+
+            geom3.computeFaceNormals();
+
+            // push the box 3D points
+			//caras de abajo NO MOVER son perfectas
+			for (var i =0; i<5;i++){
+	
+		
+            geom.vertices.push(new THREE.Vector3( 229-479,  i*26+4, 201-284));   // index 0   //172         
+            geom.vertices.push(new THREE.Vector3(  394-479,  i*26+4, 246-284));   // index 1	-----------(1)
+            geom.vertices.push(new THREE.Vector3(  467-479,  i*26+4,  376-284));   // index 2	-------------(2)
+            geom.vertices.push(new THREE.Vector3( 478-479,  i*26+4,  400-284 ));   // index 3  //175.21 dist    
+            geom.vertices.push(new THREE.Vector3( 645-479,  i*26+4, 453-284));   // index 4            
+            geom.vertices.push(new THREE.Vector3(  635-479,  i*26+4, 496-284));   // index 5
+            geom.vertices.push(new THREE.Vector3(  365-479,  i*26+4,  416-284));   // index 6
+            geom.vertices.push(new THREE.Vector3( 410-479,  i*26+4,  385-284));   // index 7
+			geom.vertices.push(new THREE.Vector3( 355-479,  i*26+4,  290-284));   // index 8
+			geom.vertices.push(new THREE.Vector3( 210-479,  i*26+4, 244-284));   // index 9
+			  
+			   geom.vertices.push(new THREE.Vector3( 735-479,  (i+1)*26-1, 365-284));   // index 10 0     //177
+			   geom.vertices.push(new THREE.Vector3( 564-479,  (i+1)*26-1, 320-284));   // index 11 1   ----------(2)
+				geom.vertices.push(new THREE.Vector3( 490-479, (i+1)*26-1, 191-284));   // index 12 2  ----------(1)
+			   geom.vertices.push(new THREE.Vector3( 470-479,  (i+1)*26-1, 152-284));   // index 13 3 //145
+			   geom.vertices.push(new THREE.Vector3( 330-479,  (i+1)*26-1, 112-284));   // index 14 4
+			   geom.vertices.push(new THREE.Vector3( 350-479,  (i+1)*26-1, 70-284));   // index 15 5
+				geom.vertices.push(new THREE.Vector3( 613-479, (i+1)*26-1, 143-284));   // index 16 6
+				geom.vertices.push(new THREE.Vector3( 543-479, (i+1)*26-1, 185-284));   // index 17 7
+				geom.vertices.push(new THREE.Vector3( 596-479, (i+1)*26-1, 283-284));   // index 18 8 
+				geom.vertices.push(new THREE.Vector3( 750-479, (i+1)*26-1, 321-284));   // index 19 9
+				
+			}
+			
+			
+			//Circulo interno caras hacia abajo
+			for(i=2; i<4;i++){
+				geom.vertices.push(new THREE.Vector3( 30, 26*i-1, 0));   // index 100
+				geom.vertices.push(new THREE.Vector3( 27.81, 26*i-1, 11.23)); // index 101
+				geom.vertices.push(new THREE.Vector3( 21.58, 26*i-1, 20.839)); // index 102
+				geom.vertices.push(new THREE.Vector3( 12.202, 26*i-1, 27.40)); // index 103
+				
+				geom.vertices.push(new THREE.Vector3( 1.046, 26*i-1, 29.98)); // index 104
+				geom.vertices.push(new THREE.Vector3( -10.26, 26*i-1, 28.19)); // index 105
+				geom.vertices.push(new THREE.Vector3( -20.07, 26*i-1, 22.29)); // index 106
+				geom.vertices.push(new THREE.Vector3( -26.96, 26*i-1, 13.15)); // index 107
+				
+				geom.vertices.push(new THREE.Vector3( -29.92, 26*i-1, 2.09)); // index 108
+				geom.vertices.push(new THREE.Vector3( -28.53, 26*i-1, -9.27)); // index 109
+				geom.vertices.push(new THREE.Vector3( -22.98, 26*i-1, -19.28)); // index 110
+				geom.vertices.push(new THREE.Vector3( -14.08, 26*i-1, -26.48)); // index 111
+				
+				geom.vertices.push(new THREE.Vector3( -3.13, 26*i-1, -29.83)); // index 112
+				geom.vertices.push(new THREE.Vector3( 8.26, 26*i-1, -28.83)); // index 113
+				geom.vertices.push(new THREE.Vector3( 18.469, 26*i-1, -23.64)); // index 114
+				geom.vertices.push(new THREE.Vector3( 25.98, 26*i-1, -15.00)); // index 115
+			}
+			//PARTE DE arriba DEL PISO 
+					for (var i =0; i<5;i++){
+					
+            geom.vertices.push(new THREE.Vector3( 229-479,  i*26, 201-284));   // index 132           
+            geom.vertices.push(new THREE.Vector3(  394-479,  i*26, 246-284));  // index 133
+            geom.vertices.push(new THREE.Vector3(  467-479,  i*26,  376-284));   // index 134
+            geom.vertices.push(new THREE.Vector3( 478-479,  i*26,  400-284 ));   // index 135      
+            geom.vertices.push(new THREE.Vector3( 645-479,  i*26, 453-284));   // index 136            
+            geom.vertices.push(new THREE.Vector3(  635-479,  i*26, 496-284));   // index 137
+            geom.vertices.push(new THREE.Vector3(  365-479,  i*26,  416-284));   // index 138
+            geom.vertices.push(new THREE.Vector3( 410-479,  i*26,  385-284));   // index 139
+			geom.vertices.push(new THREE.Vector3( 355-479,  i*26,  290-284));   // index 140
+			geom.vertices.push(new THREE.Vector3( 210-479,  i*26, 244-284));   // index 141
+			  
+			   geom.vertices.push(new THREE.Vector3( 735-479,  (i+1)*26-5, 365-284));   // index 142 0
+			   geom.vertices.push(new THREE.Vector3( 564-479,  (i+1)*26-5, 320-284));   // index 143 1
+				geom.vertices.push(new THREE.Vector3( 490-479, (i+1)*26-5, 191-284));   // index 144 2 
+			   geom.vertices.push(new THREE.Vector3( 470-479,  (i+1)*26-5, 152-284));   // index 145 3
+			   geom.vertices.push(new THREE.Vector3( 330-479,  (i+1)*26-5, 112-284));   // index 146 4
+			   geom.vertices.push(new THREE.Vector3( 350-479,  (i+1)*26-5, 70-284));   // index 147 5
+				geom.vertices.push(new THREE.Vector3( 613-479, (i+1)*26-5, 143-284));   // index 148 6
+				geom.vertices.push(new THREE.Vector3( 543-479, (i+1)*26-5, 185-284));   // index 149 7
+				geom.vertices.push(new THREE.Vector3( 596-479, (i+1)*26-5, 283-284));   // index 150 8 
+				geom.vertices.push(new THREE.Vector3( 750-479, (i+1)*26-5, 321-284));   // index 151 9
+						
+	
+			}
+			
+									//index 232	
+			 
+			 	//Circulo interno caras hacia arriba
+			for(i=2; i<4;i++){
+				geom.vertices.push(new THREE.Vector3( 30, 26*i-4, 0));   // index 232
+				geom.vertices.push(new THREE.Vector3( 27.81, 26*i-4, 11.23)); // index 233
+				geom.vertices.push(new THREE.Vector3( 21.58, 26*i-4, 20.839)); // index 234
+				geom.vertices.push(new THREE.Vector3( 12.202, 26*i-4, 27.40)); // index 235
+				
+				geom.vertices.push(new THREE.Vector3( 1.046, 26*i-4, 29.98)); // index 236
+				geom.vertices.push(new THREE.Vector3( -10.26, 26*i-4, 28.19)); // index 237
+				geom.vertices.push(new THREE.Vector3( -20.07, 26*i-4, 22.29)); // index 238
+				geom.vertices.push(new THREE.Vector3( -26.96, 26*i-4, 13.15)); // index 239
+				
+				geom.vertices.push(new THREE.Vector3( -29.92, 26*i-4, 2.09)); // index 240
+				geom.vertices.push(new THREE.Vector3( -28.53, 26*i-4, -9.27)); // index 241
+				geom.vertices.push(new THREE.Vector3( -22.98, 26*i-4, -19.28)); // index 242
+				geom.vertices.push(new THREE.Vector3( -14.08, 26*i-4, -26.48)); // index 243
+				
+				geom.vertices.push(new THREE.Vector3( -3.13, 26*i-4, -29.83)); // index 244
+				geom.vertices.push(new THREE.Vector3( 8.26, 26*i-4, -28.83)); // index 245
+				geom.vertices.push(new THREE.Vector3( 18.469, 26*i-4, -23.64)); // index 246
+				geom.vertices.push(new THREE.Vector3( 25.98, 26*i-4, -15.00)); // index 247
+			}   
+			i=1.98;
+			geoma.vertices.push(new THREE.Vector3( 30, 26*i-4, 0));   // index 232 0
+				geoma.vertices.push(new THREE.Vector3( 27.81, 26*i-4, 11.23)); // index 233 1
+				geoma.vertices.push(new THREE.Vector3( 21.58, 26*i-4, 20.839)); // index 234 2
+				geoma.vertices.push(new THREE.Vector3( 12.202, 26*i-4, 27.40)); // index 235 3
+				 
+				geoma.vertices.push(new THREE.Vector3( 1.046, 26*i-4, 29.98)); // index 236 4
+				geoma.vertices.push(new THREE.Vector3( -10.26, 26*i-4, 28.19)); // index 237 5
+				geoma.vertices.push(new THREE.Vector3( -20.07, 26*i-4, 22.29)); // index 238 6
+				geoma.vertices.push(new THREE.Vector3( -26.96, 26*i-4, 13.15)); // index 239 7
+				
+				geoma.vertices.push(new THREE.Vector3( -29.92, 26*i-4, 2.09)); // index 240 8
+				geoma.vertices.push(new THREE.Vector3( -28.53, 26*i-4, -9.27)); // index 241 9
+				geoma.vertices.push(new THREE.Vector3( -22.98, 26*i-4, -19.28)); // index 242 10
+				geoma.vertices.push(new THREE.Vector3( -14.08, 26*i-4, -26.48)); // index 243 11
+				
+				geoma.vertices.push(new THREE.Vector3( -3.13, 26*i-4, -29.83)); // index 244 12
+				geoma.vertices.push(new THREE.Vector3( 8.26, 26*i-4, -28.83)); // index 245 13
+				geoma.vertices.push(new THREE.Vector3( 18.469, 26*i-4, -23.64)); // index 246 14
+				geoma.vertices.push(new THREE.Vector3( 25.98, 26*i-4, -15.00)); // index 247 15
+				
+			   geoma.vertices.push(new THREE.Vector3( 564-479,  (.99+1)*26-5, 320-284));   // index 143 1   ESTE 163 16
+				geoma.vertices.push(new THREE.Vector3( 490-479, (.99+1)*26-5, 191-284));   // index 144 2    ESTE 164 17
+			        
+            geoma.vertices.push(new THREE.Vector3(  394-479,  1.99*26, 246-284));  // index 133    este 173 18
+            geoma.vertices.push(new THREE.Vector3(  467-479,  1.99*26,  376-284));   // index 134		este 174 19
+ 		 	//Alfombra
+  			i=2.98;
+				geoma2.vertices.push(new THREE.Vector3( 30, 26*i-4, 0));   // index 232 20
+				geoma2.vertices.push(new THREE.Vector3( 27.81, 26*i-4, 11.23)); // index 233 1
+				geoma2.vertices.push(new THREE.Vector3( 21.58, 26*i-4, 20.839)); // index 234 2
+				geoma2.vertices.push(new THREE.Vector3( 12.202, 26*i-4, 27.40)); // index 235 3
+				 
+				geoma2.vertices.push(new THREE.Vector3( 1.046, 26*i-4, 29.98)); // index 236 4
+				geoma2.vertices.push(new THREE.Vector3( -10.26, 26*i-4, 28.19)); // index 237 5
+				geoma2.vertices.push(new THREE.Vector3( -20.07, 26*i-4, 22.29)); // index 238 6
+				geoma2.vertices.push(new THREE.Vector3( -26.96, 26*i-4, 13.15)); // index 239 7
+				
+				geoma2.vertices.push(new THREE.Vector3( -29.92, 26*i-4, 2.09)); // index 240 8
+				geoma2.vertices.push(new THREE.Vector3( -28.53, 26*i-4, -9.27)); // index 241 9
+				geoma2.vertices.push(new THREE.Vector3( -22.98, 26*i-4, -19.28)); // index 242 10
+				geoma2.vertices.push(new THREE.Vector3( -14.08, 26*i-4, -26.48)); // index 243 11
+				
+				geoma2.vertices.push(new THREE.Vector3( -3.13, 26*i-4, -29.83)); // index 244 12
+				geoma2.vertices.push(new THREE.Vector3( 8.26, 26*i-4, -28.83)); // index 245 13
+				geoma2.vertices.push(new THREE.Vector3( 18.469, 26*i-4, -23.64)); // index 246 14
+				geoma2.vertices.push(new THREE.Vector3( 25.98, 26*i-4, -15.00)); // index 247 15
+				
+				geoma2.vertices.push(new THREE.Vector3( 564-479,  (1.99+1)*26-5, 320-284));   // index 143 1   ESTE 163 16
+				geoma2.vertices.push(new THREE.Vector3( 490-479, (1.99+1)*26-5, 191-284));   // index 144 2    ESTE 164 17
+			        
+            geoma2.vertices.push(new THREE.Vector3(  394-479,  2.99*26, 246-284));  // index 133    este 173 18
+            geoma2.vertices.push(new THREE.Vector3(  467-479,  2.99*26,  376-284));
+			
+			
+			//Index 264
+			//6to piso hacia abajo
+				
+		
+            geom.vertices.push(new THREE.Vector3( 229-479,  -1*26+4, 201-284));   // index 0    263      
+            geom.vertices.push(new THREE.Vector3(  394-479,  -1*26+4, 246-284));   // index 1    264
+            geom.vertices.push(new THREE.Vector3(  467-479,  -1*26+4,  376-284));   // index 2     265
+            geom.vertices.push(new THREE.Vector3( 478-479,  -1*26+4,  400-284 ));   // index 3  //175.21 dist    266
+            geom.vertices.push(new THREE.Vector3( 645-479,  -1*26+4, 453-284));   // index 4           267 
+            geom.vertices.push(new THREE.Vector3(  635-479,  -1*26+4, 496-284));   // index 5   268
+            geom.vertices.push(new THREE.Vector3(  365-479,  -1*26+4,  416-284));   // index 6   269
+            geom.vertices.push(new THREE.Vector3( 410-479,  -1*26+4,  385-284));   // index 7    270
+			geom.vertices.push(new THREE.Vector3( 355-479,  -1*26+4,  290-284));   // index 8  271
+			geom.vertices.push(new THREE.Vector3( 210-479,  -1*26+4, 244-284));   // index 9    272
+			  
+			   geom.vertices.push(new THREE.Vector3( 735-479,  (-1+1)*26-1, 365-284));   // index 10 0  272
+			   geom.vertices.push(new THREE.Vector3( 564-479,  (-1+1)*26-1, 320-284));   // index 11 1    273
+				geom.vertices.push(new THREE.Vector3( 490-479, (-1+1)*26-1, 191-284));   // index 12 2    274
+			   geom.vertices.push(new THREE.Vector3( 470-479,  (-1+1)*26-1, 152-284));   // index 13 3 //145    275
+			   geom.vertices.push(new THREE.Vector3( 330-479,  (-1+1)*26-1, 112-284));   // index 14 4     276
+			   geom.vertices.push(new THREE.Vector3( 350-479,  (-1+1)*26-1, 70-284));   // index 15 5     277
+				geom.vertices.push(new THREE.Vector3( 613-479, (-1+1)*26-1, 143-284));   // index 16 6    278
+				geom.vertices.push(new THREE.Vector3( 543-479, (-1+1)*26-1, 185-284));   // index 17 7    279
+				geom.vertices.push(new THREE.Vector3( 596-479, (-1+1)*26-1, 283-284));   // index 18 8     280
+				geom.vertices.push(new THREE.Vector3( 750-479, (-1+1)*26-1, 321-284));   // index 19 9    281
+			
+			//INDEX 284
+			
+			//6to piso hacia arriba
+			
+			  geom.vertices.push(new THREE.Vector3( 229-479,  -1*26, 201-284));   // index 132           
+            geom.vertices.push(new THREE.Vector3(  394-479,  -1*26, 246-284));  // index 133
+            geom.vertices.push(new THREE.Vector3(  467-479,  -1*26,  376-284));   // index 134
+            geom.vertices.push(new THREE.Vector3( 478-479,  -1*26,  400-284 ));   // index 135      
+            geom.vertices.push(new THREE.Vector3( 645-479,  -1*26, 453-284));   // index 136            
+            geom.vertices.push(new THREE.Vector3(  635-479,  -1*26, 496-284));   // index 137
+            geom.vertices.push(new THREE.Vector3(  365-479,  -1*26,  416-284));   // index 138
+            geom.vertices.push(new THREE.Vector3( 410-479,  -1*26,  385-284));   // index 139
+			geom.vertices.push(new THREE.Vector3( 355-479,  -1*26,  290-284));   // index 140
+			geom.vertices.push(new THREE.Vector3( 210-479,  -1*26, 244-284));   // index 141
+			  
+			   geom.vertices.push(new THREE.Vector3( 735-479,  (-1+1)*26-5, 365-284));   // index 142 0
+			   geom.vertices.push(new THREE.Vector3( 564-479,  (-1+1)*26-5, 320-284));   // index 143 1
+				geom.vertices.push(new THREE.Vector3( 490-479, (-1+1)*26-5, 191-284));   // index 144 2 
+			   geom.vertices.push(new THREE.Vector3( 470-479,  (-1+1)*26-5, 152-284));   // index 145 3
+			   geom.vertices.push(new THREE.Vector3( 330-479,  (-1+1)*26-5, 112-284));   // index 146 4
+			   geom.vertices.push(new THREE.Vector3( 350-479,  (-1+1)*26-5, 70-284));   // index 147 5
+				geom.vertices.push(new THREE.Vector3( 613-479, (-1+1)*26-5, 143-284));   // index 148 6
+				geom.vertices.push(new THREE.Vector3( 543-479, (-1+1)*26-5, 185-284));   // index 149 7
+				geom.vertices.push(new THREE.Vector3( 596-479, (-1+1)*26-5, 283-284));   // index 150 8 
+				geom.vertices.push(new THREE.Vector3( 750-479, (-1+1)*26-5, 321-284));   // index 151 9
+				
+			
+			//CARAS DE PISOS HACIA abajo
+			for(i= 0;i<5;i++){
+				var u = 20;
+				var b= (i*u);
+				if(i!= 0 ){
+            geom.faces.push( new THREE.Face3( b+1, b+0, b+9 ) );      // index 0
+            geom.faces.push( new THREE.Face3( b+1, b+9, b+8 ) );      // index 1
+				
+            geom.faces.push( new THREE.Face3( b+2, b+1, b+8 ) );      // index 2
+            geom.faces.push( new THREE.Face3( b+2, b+8, b+7 ) );      // index 3  
+				}
+				
+		 	 geom.faces.push( new THREE.Face3( b+3, b+2, b+7 ) );      // index 4
+		  geom.faces.push( new THREE.Face3( b+6, b+3, b+7 ) );      // index 5
+          geom.faces.push( new THREE.Face3( b+5, b+3, b+6 ) );      // index 6
+           geom.faces.push( new THREE.Face3( b+5, b+4, b+3 ) );  // index 7
+				
+		   if(i!= 0){
+		   geom.faces.push( new THREE.Face3( b+11, b+10, b+19 ) );      // index 8
+            geom.faces.push( new THREE.Face3( b+11, b+19, b+18 ) );      // index 9
+            geom.faces.push( new THREE.Face3( b+12, b+11, b+18 ) );      // index 10
+            geom.faces.push( new THREE.Face3( b+12, b+18, b+17 ) );      // index 11
+		   }
+		  geom.faces.push( new THREE.Face3( b+13, b+12, b+17 ) );      // index 12
+		  geom.faces.push( new THREE.Face3( b+16, b+13, b+17 ) );      // index 13
+          geom.faces.push( new THREE.Face3( b+15, b+13, b+16 ) );      // index 14
+           geom.faces.push( new THREE.Face3( b+15, b+14, b+13 ) );  // index 15
+			}
+			
+			//CARAS HACIA ABAJO 6TO    0 264
+			 geom.faces.push( new THREE.Face3( 267, 266, 271 ) );      // index 4
+		  geom.faces.push( new THREE.Face3( 270, 267, 271 ) );      // index 5
+          geom.faces.push( new THREE.Face3( 269, 267, 270 ) );      // index 6
+          geom.faces.push( new THREE.Face3( 269, 268, 267) );  // index 7
+		   
+		    geom.faces.push( new THREE.Face3( 277, 276, 281 ) );      // index 12
+		  geom.faces.push( new THREE.Face3( 280, 277, 281 ) );      // index 13
+          geom.faces.push( new THREE.Face3( 279, 277, 280 ) );      // index 14
+         geom.faces.push( new THREE.Face3( 279, 278, 277 ) );  // index 15
+		 
+		
+			
+			
+			//CARAS DE PISOS HACIA arriba
+		for(i= 0;i<5;i++){
+				var u = 20;
+				var b= (i*u);
+				if(i!= 0 ){
+            geom.faces.push( new THREE.Face3( b+141, b+132, b+133 ) );      // index 0
+            geom.faces.push( new THREE.Face3( b+140, b+141, b+133 ) );      // index 1
+            geom.faces.push( new THREE.Face3( b+140, b+133, b+134 ) );      // index 2
+            geom.faces.push( new THREE.Face3( b+139, b+140, b+134 ) );      // index 3   
+				}
+		 	 geom.faces.push( new THREE.Face3( b+139, b+134, b+135 ) );      // index 4
+		  geom.faces.push( new THREE.Face3( b+139, b+135, b+138 ) );      // index 5
+          geom.faces.push( new THREE.Face3( b+138, b+135, b+137 ) );      // index 6
+           geom.faces.push( new THREE.Face3( b+135, b+136, b+137 ) );  // index 7
+		   
+		   if(i!= 0 ){
+		   geom.faces.push( new THREE.Face3( b+151, b+142, b+143 ) );      // index 8
+            geom.faces.push( new THREE.Face3( b+150, b+151, b+143 ) );      // index 9
+            geom.faces.push( new THREE.Face3( b+150, b+143, b+144 ) );      // index 10
+            geom.faces.push( new THREE.Face3( b+149, b+150, b+144 ) );      // index 11
+		   }
+		  geom.faces.push( new THREE.Face3( b+149, b+144, b+145 ) );      // index 12
+		  geom.faces.push( new THREE.Face3( b+149, b+145, b+148 ) );      // index 13
+          geom.faces.push( new THREE.Face3( b+148, b+145, b+147 ) );      // index 14
+           geom.faces.push( new THREE.Face3( b+145, b+146, b+147 ) );  // index 15
+			}
+			
+			 //CARAS ARRIBA 6to 0 284       0 132 +52
+			 b=152;
+			 geom.faces.push( new THREE.Face3( b+139, b+134, b+135 ) );      // index 4
+		  geom.faces.push( new THREE.Face3( b+139, b+135, b+138 ) );      // index 5
+          geom.faces.push( new THREE.Face3( b+138, b+135, b+137 ) );      // index 6
+           geom.faces.push( new THREE.Face3( b+135, b+136, b+137 ) );  // index 7
+		   
+		    geom.faces.push( new THREE.Face3( b+149, b+144, b+145 ) );      // index 12
+		  geom.faces.push( new THREE.Face3( b+149, b+145, b+148 ) );      // index 13
+          geom.faces.push( new THREE.Face3( b+148, b+145, b+147 ) );      // index 14
+           geom.faces.push( new THREE.Face3( b+145, b+146, b+147 ) );  // index 15
+			
+			//PISO superior DAE
+			
+			geom.faces.push( new THREE.Face3( 31, 32, 100 ) );  //Triangulo entre 1 y 2    
+			
+		  geom.faces.push( new THREE.Face3( 31, 100, 101 ) );     
+          geom.faces.push( new THREE.Face3( 31, 101, 102 ) );  
+		   geom.faces.push( new THREE.Face3( 31, 102, 103 ) );  
+		    geom.faces.push( new THREE.Face3( 31, 102, 104 ) );  //Esq inferior derecha	
+			
+			geom.faces.push( new THREE.Face3(42, 31, 104 ) ); //triangulote
+			
+		   geom.faces.push( new THREE.Face3( 42, 104, 105 ) );     
+          geom.faces.push( new THREE.Face3( 42, 105, 106 ) );  
+		   geom.faces.push( new THREE.Face3( 42, 106, 107 ) );  
+		  geom.faces.push( new THREE.Face3( 42, 106, 108) ); //Esq inferior Izq
+			
+			geom.faces.push( new THREE.Face3(41, 42, 108 ) );//triangulote
+			
+			geom.faces.push( new THREE.Face3( 41, 108, 109 ) );     
+          geom.faces.push( new THREE.Face3( 41, 109, 110 ) );  
+		   geom.faces.push( new THREE.Face3( 41, 110, 111 ) );  
+		    geom.faces.push( new THREE.Face3( 41, 110, 112 ) );//Esq superior Izq
+			
+			geom.faces.push( new THREE.Face3(41, 112, 32 ) );//triangulote
+			
+		geom.faces.push( new THREE.Face3( 32, 112, 113 ) );     
+          geom.faces.push( new THREE.Face3( 32, 113, 114 ) );  
+		   geom.faces.push( new THREE.Face3( 32, 114, 115 ) );  
+		 geom.faces.push( new THREE.Face3( 32, 114, 100 ) );//Esq superior derecha
+		  
+		  //PISO inferior DAE
+		  
+		  		geom.faces.push( new THREE.Face3( 51, 52, 116 ) );  //Triangulo entre 1 y 2    
+			
+		  geom.faces.push( new THREE.Face3( 51, 116, 117 ) );     
+          geom.faces.push( new THREE.Face3( 51, 117, 118 ) );  
+		   geom.faces.push( new THREE.Face3( 51, 118, 119 ) );  
+		    geom.faces.push( new THREE.Face3( 51, 118, 120 ) );  //Esq inferior derecha	
+			
+			geom.faces.push( new THREE.Face3(62, 51, 120 ) ); //triangulote
+			
+		   geom.faces.push( new THREE.Face3( 62, 120, 121 ) );     
+          geom.faces.push( new THREE.Face3( 62, 121, 122 ) );  
+		   geom.faces.push( new THREE.Face3( 62, 122, 123 ) );  
+		    geom.faces.push( new THREE.Face3( 62, 122, 124 ) ); //Esq inferior Izq
+			
+			geom.faces.push( new THREE.Face3(61, 62, 124 ) );//triangulote
+			
+			geom.faces.push( new THREE.Face3( 61, 124, 125 ) );     
+          geom.faces.push( new THREE.Face3( 61, 125, 126 ) );  
+		   geom.faces.push( new THREE.Face3( 61, 126, 127 ) );  
+		    geom.faces.push( new THREE.Face3( 61, 126, 128 ) );//Esq superior Izq
+			
+			geom.faces.push( new THREE.Face3(61, 128, 52 ) );//triangulote
+			
+		geom.faces.push( new THREE.Face3( 52, 128, 129 ) );     
+          geom.faces.push( new THREE.Face3( 52, 129, 130 ) );  
+		   geom.faces.push( new THREE.Face3( 52, 130, 131 ) );  
+		  geom.faces.push( new THREE.Face3( 52, 130, 116 ) );//Esq superior derecha	
+			
+			//pisos dae hacia arriba 
+			
+		geom.faces.push( new THREE.Face3( 232, 164, 163) );  //Triangulo entre 1 y 2  // 31->163  32->164 100->232  
+			
+		  geom.faces.push( new THREE.Face3( 233, 232, 163 ) );     
+          geom.faces.push( new THREE.Face3(234, 233, 163 ) );  
+		   geom.faces.push( new THREE.Face3( 235, 234, 163 ) );  
+		    geom.faces.push( new THREE.Face3( 236, 234, 163 ) );  //Esq inferior derecha	
+			
+			geom.faces.push( new THREE.Face3(236, 163, 174 ) ); //triangulote
+			
+		   geom.faces.push( new THREE.Face3( 237, 236, 174 ) );     
+          geom.faces.push( new THREE.Face3( 238, 237, 174 ) );  
+		   geom.faces.push( new THREE.Face3( 239, 238, 174 ) );  
+		    geom.faces.push( new THREE.Face3( 240, 238, 174 ) ); //Esq inferior Izq
+			
+			geom.faces.push( new THREE.Face3(240, 174, 173 ) );//triangulote
+			
+			geom.faces.push( new THREE.Face3( 241, 240, 173 ) );     
+          geom.faces.push( new THREE.Face3( 242, 241, 173 ) );  
+		   geom.faces.push( new THREE.Face3( 243, 242, 173 ) );  
+		    geom.faces.push( new THREE.Face3( 244, 242, 173 ) );//Esq superior Izq
+			
+			geom.faces.push( new THREE.Face3(164, 244, 173 ) );//triangulote
+			
+		geom.faces.push( new THREE.Face3( 245, 244, 164 ) );     
+          geom.faces.push( new THREE.Face3( 246, 245, 164 ) );  
+		   geom.faces.push( new THREE.Face3( 247, 246, 164) );  
+		  geom.faces.push( new THREE.Face3( 232, 246, 164 ) );//Esq superior derecha
+		  
+		  //MADERA
+		  		
+		  geoma.faces.push( new THREE.Face3( 232-232, 17, 16) );  //Triangulo entre 1 y 2  // 31->163  32->164 100->232  
+			
+		  geoma.faces.push( new THREE.Face3( 233-232, 232-232, 16 ) );     
+          geoma.faces.push( new THREE.Face3(234-232, 233-232, 16 ) );  
+		   geoma.faces.push( new THREE.Face3( 235-232, 234-232, 16 ) );  
+		    geoma.faces.push( new THREE.Face3( 236-232, 234-232, 16 ) );  //Esq inferior derecha	
+			
+			geoma.faces.push( new THREE.Face3(236-232, 16, 19 ) ); //triangulote
+			
+		   geoma.faces.push( new THREE.Face3( 237-232, 236-232, 19 ) );     
+          geoma.faces.push( new THREE.Face3( 238-232, 237-232, 19 ) );  
+		   geoma.faces.push( new THREE.Face3( 239-232, 238-232, 19 ) );  
+		    geoma.faces.push( new THREE.Face3( 240-232, 238-232, 19 ) ); //Esq inferior Izq
+			
+			geoma.faces.push( new THREE.Face3(240-232, 19, 18 ) );//triangulote
+			
+			geoma.faces.push( new THREE.Face3( 241-232, 240-232, 18 ) );     
+          geoma.faces.push( new THREE.Face3( 242-232, 241-232, 18 ) );  
+		   geoma.faces.push( new THREE.Face3( 243-232, 242-232, 18 ) );  
+		    geoma.faces.push( new THREE.Face3( 244-232, 242-232, 18 ) );//Esq superior Izq
+			
+			geoma.faces.push( new THREE.Face3(17, 244-232, 18 ) );//triangulote
+			
+		geoma.faces.push( new THREE.Face3( 245-232, 244-232, 17 ) );     
+          geoma.faces.push( new THREE.Face3( 246-232, 245-232, 17 ) );  
+		   geoma.faces.push( new THREE.Face3( 247-232, 246-232, 17) );  
+		  geoma.faces.push( new THREE.Face3( 232-232, 246-232, 17 ) );//Esq superior derecha
+		  
+		  //ALFOMBRA
+ 		 geoma2.faces.push( new THREE.Face3( 232-232, 17, 16) );  //Triangulo entre 1 y 2  // 31->163  32->164 100->232  
+			
+		  geoma2.faces.push( new THREE.Face3( 233-232, 232-232, 16 ) );     
+          geoma2.faces.push( new THREE.Face3(234-232, 233-232, 16 ) );  
+		   geoma2.faces.push( new THREE.Face3( 235-232, 234-232, 16 ) );  
+		    geoma2.faces.push( new THREE.Face3( 236-232, 234-232, 16 ) );  //Esq inferior derecha	
+			
+			geoma2.faces.push( new THREE.Face3(236-232, 16, 19 ) ); //triangulote
+			
+		   geoma2.faces.push( new THREE.Face3( 237-232, 236-232, 19 ) );     
+          geoma2.faces.push( new THREE.Face3( 238-232, 237-232, 19 ) );  
+		   geoma2.faces.push( new THREE.Face3( 239-232, 238-232, 19 ) );  
+		    geoma2.faces.push( new THREE.Face3( 240-232, 238-232, 19 ) ); //Esq inferior Izq
+			
+			geoma2.faces.push( new THREE.Face3(240-232, 19, 18 ) );//triangulote
+			
+			geoma2.faces.push( new THREE.Face3( 241-232, 240-232, 18 ) );     
+          geoma2.faces.push( new THREE.Face3( 242-232, 241-232, 18 ) );  
+		   geoma2.faces.push( new THREE.Face3( 243-232, 242-232, 18 ) );  
+		    geoma2.faces.push( new THREE.Face3( 244-232, 242-232, 18 ) );//Esq superior Izq
+			
+			geoma2.faces.push( new THREE.Face3(17, 244-232, 18 ) );//triangulote
+			
+		geoma2.faces.push( new THREE.Face3( 245-232, 244-232, 17 ) );     
+          geoma2.faces.push( new THREE.Face3( 246-232, 245-232, 17 ) );  
+		   geoma2.faces.push( new THREE.Face3( 247-232, 246-232, 17) );  
+		  geoma2.faces.push( new THREE.Face3( 232-232, 246-232, 17 ) );//Esq superior derecha
+		  
+		  //PISO inferior DAE
+		  
+		  		geom.faces.push( new THREE.Face3( 248, 184, 183 ) );  //Triangulo entre 1 y 2    116->248 
+			
+		  geom.faces.push( new THREE.Face3( 249, 248, 183 ) );     
+          geom.faces.push( new THREE.Face3( 250, 249, 183) );  
+		   geom.faces.push( new THREE.Face3( 251, 250, 183 ) );  
+		    geom.faces.push( new THREE.Face3( 252, 250, 183 ) );  //Esq inferior derecha	
+			
+			geom.faces.push( new THREE.Face3(252, 183, 194 ) ); //triangulote
+			
+		   geom.faces.push( new THREE.Face3( 253, 252, 194 ) );     
+          geom.faces.push( new THREE.Face3( 254, 253, 194) );  
+		   geom.faces.push( new THREE.Face3( 255, 254, 194 ) );  
+		    geom.faces.push( new THREE.Face3( 256, 254, 194 ) ); //Esq inferior Izq
+			
+			geom.faces.push( new THREE.Face3(256, 194, 193 ) );//triangulote
+			
+			geom.faces.push( new THREE.Face3( 257, 256, 193 ) );     
+          geom.faces.push( new THREE.Face3( 258, 257, 193) );  
+		   geom.faces.push( new THREE.Face3( 259, 258, 193) );  
+		    geom.faces.push( new THREE.Face3( 260, 258, 193 ) );//Esq superior Izq
+			
+			geom.faces.push( new THREE.Face3(184, 260, 193 ) );//triangulote
+			
+		geom.faces.push( new THREE.Face3( 261, 260, 184 ) );     
+          geom.faces.push( new THREE.Face3( 262, 261, 184) );  
+		   geom.faces.push( new THREE.Face3( 263, 262,184) );  
+		  geom.faces.push( new THREE.Face3( 248, 262, 184) );//Esq superior derecha
+			
+			
+            geom.computeFaceNormals();
+			geoma.computeFaceNormals();
+			geoma2.computeFaceNormals();
+			
+			
+			var res = 129;
+			var cosaMateriala = new THREE.MeshLambertMaterial({color: 0xffffff, wireframe: false});
+              var cosaMaterial = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("textura1.jpg")});
+			  var cosaMateriali = new THREE.MeshBasicMaterial({map: THREE.ImageUtils.loadTexture("texti.jpg")});
+			  var cosaMaterial200 = new THREE.MeshLambertMaterial({color: 0x5C3317, wireframe: false});
+			   var cosaMaterial300 = new THREE.MeshLambertMaterial({color: 0x0A003A, wireframe: false});
+			   var cosaMaterial4 = new THREE.MeshLambertMaterial({color: 0x777777, wireframe: false});
+			   
+			var vidrio = new THREE.MeshLambertMaterial({transparent:true, color: 0x004466, wireframe: false, opacity: 0.9});
+			var cosaMaterial3 = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("rustyatras.jpg")});
+			var cosaMaterial2 = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("rustycostado.jpg")});
+			var cosaMaterialx = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("rusty.jpg")});
+			var cosaMaterial5 = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("prop.jpg")});
+			var cosaMaterial6 = new THREE.MeshLambertMaterial({color: 0xAFA7A4, wireframe: false});
+			var cosaMaterial7 = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("insidetop.jpg")});
+			var cosaMaterial8 = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("r2d2.jpg")});
+			var cosaMaterial9 = new THREE.MeshLambertMaterial({map: THREE.ImageUtils.loadTexture("r2top.jpg")});
+
+            // create a wireframe material
+            var meshMaterial = new THREE.MeshLambertMaterial({color: 0xff0000, wireframe: true});
+			var meshMaterial2 = new THREE.MeshLambertMaterial({transparent:true, color: 0x006666, wireframe: false, opacity: 0.4});
+			var meshMaterial3 = new THREE.MeshLambertMaterial({transparent:true, color: 0x222222, wireframe: false, opacity: 0.8});
+			
+			//( 478-479,  -1*26+4,  400-284 ));   // index 3  //175.21 dist    266
+            //geom.vertices.push(new THREE.Vector3( 645-479,  -1*26+4, 453-284))
+				
+		//PAREDCITAS DE UN GRUPO
+			group5 = new THREE.Object3D();
+			 	var pared1  = new THREE.CubeGeometry(175,11,2);
+			  var pared = new THREE.Mesh(pared1, cosaMaterial);
+			  pared.position.set( 561-479,  3*26+4-5, 427-284);
+			  pared.rotation.y-=(Math.PI/180)*17.5;
+			      group5.add( pared ); 
+			
+			   
+			  var object500 = new THREE.Mesh (pared1, cosaMaterial);
+			   object500.position.set( 561-479,  2*26+4-5, 427-284);
+			    object500.rotation.y-=(Math.PI/180)*17.5;
+				group5.add(object500);
+				
+			  var object501 = new THREE.Mesh (pared1, cosaMaterial);
+			   object501.position.set( 561-479,  1*26+4-5, 427-284);
+			    object501.rotation.y-=(Math.PI/180)*17.5;
+				group5.add(object501);
+			
+			var object502 = new THREE.Mesh (pared1, cosaMaterial);
+			   object502.position.set( 561-479,  0*26+4-5, 427-284);
+			    object502.rotation.y-=(Math.PI/180)*17.5;
+				group5.add(object502);
+			var object503 = new THREE.Mesh (pared1, cosaMaterial);
+			   object503.position.set( 561-479,  -1*26+4-5, 427-284);
+			    object503.rotation.y-=(Math.PI/180)*17.5;
+				group5.add(object503);
+				
+			group201 = new THREE.Object3D();	
+			group200 = new THREE.Object3D();	
+			var pared2000  = new THREE.CubeGeometry(30,17,2);	
+			var object900 = new THREE.Mesh (pared2000, cosaMateriali);
+			   object900.position.set( 680-479,  3*26+4-16, 330-284);
+			    object900.rotation.y-=(Math.PI/180)*16;
+				group200.add(object900);		
+				
+			var pared2001  = new THREE.CubeGeometry(30,7,2);	
+			var object901 = new THREE.Mesh (pared2001, meshMaterial2);
+			   object901.position.set( 680-479,  3*26+4-28, 330-284);
+			    object901.rotation.y-=(Math.PI/180)*16;
+				group200.add(object901);	
+			
+			var pared2001  = new THREE.CubeGeometry(25,25,2);	
+			var object901 = new THREE.Mesh (pared2001, cosaMateriali);
+			   object901.position.set( 697-479,  3*26+4-20, 322-284);
+			    object901.rotation.y-=(Math.PI/180)*106;
+				group200.add(object901);	
+				
+			var pared2002  = new THREE.CubeGeometry(25,25,2);	
+			var object901 = new THREE.Mesh (pared2002, cosaMateriali);
+			   object901.position.set( 660-479,  3*26+4-20, 313-284);
+			    object901.rotation.y-=(Math.PI/180)*106;
+				group200.add(object901);
+				
+			group201 = new THREE.Object3D();		
+			group201.add(group200);	
+			
+			//group201.position.x = 650-479;
+			//group201.position.z = 300-284;
+			//group201.position.y= 3*26+4-20;
+			//group201.rotation.y -= (Math.PI/180)*106;	
+	
+			//group5.add(group200);
+			group5.add(group201);
+			//PAREDCITAS DE GRUPO 2
+			//( 470-479,  (i+1)*26-1, 152-284));   // index 13 3 //145
+		     // geom.vertices.push(new THREE.Vector3( 330-479,  (i+1)*26-1, 112-284));
+			var pared2  = new THREE.CubeGeometry(145,11,2);
+			var paredi = new THREE.Mesh(pared2, cosaMaterial);
+			paredi.position.set( 400-479,  0*26-1-5.5, 132-284);
+			paredi.rotation.y-=(Math.PI/180)*16.5;
+			group5.add( paredi ); 
+			
+		
+			var object504 = new THREE.Mesh(pared2, cosaMaterial);
+			object504.position.set( 400-479,  1*26-1-5.5, 132-284);
+			object504.rotation.y-=(Math.PI/180)*16.5;
+			group5.add( object504 ); 
+			
+			var object505 = new THREE.Mesh(pared2, cosaMaterial);
+			object505.position.set( 400-479,  2*26-1-5.5, 132-284);
+			object505.rotation.y-=(Math.PI/180)*16.5;
+			group5.add( object505 ); 
+			
+			var object506 = new THREE.Mesh(pared2, cosaMaterial);
+			object506.position.set( 400-479,  3*26-1-5.5, 132-284);
+			object506.rotation.y-=(Math.PI/180)*16.5;
+			group5.add( object506 ); 
+			
+			var object507 = new THREE.Mesh(pared2, cosaMaterial);
+			object507.position.set( 400-479,  4*26-1-5.5, 132-284);
+			object507.rotation.y-=(Math.PI/180)*16.5;
+			group5.add( object507 ); 
+			
+			//PAREDCITAS DE GRUPO 3
+			// geom.vertices.push(new THREE.Vector3( 229-479,  i*26+4, 201-284));   // index 0            
+           // geom.vertices.push(new THREE.Vector3(  394-479,  i*26+4, 246-284));   // index 1
+		   //171 dist
+		   var pared3  = new THREE.CubeGeometry(172,11,2);
+			var paredi2 = new THREE.Mesh(pared3, cosaMaterial);
+			paredi2.position.set( 312-479,  1*26-1-.5, 224-284);
+			paredi2.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi2 ); 
+			
+			
+			var object508 = new THREE.Mesh(pared3, cosaMaterial);
+			object508.position.set( 312-479,  2*26-1-.5, 224-284);
+			object508.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object508 ); 
+			
+			var object509 = new THREE.Mesh(pared3, cosaMaterial);
+			object509.position.set( 312-479,  3*26-1-.5, 224-284);
+			object509.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object509 ); 
+			
+			//PAREDCITAS DEL GRUPO 4
+			// geom.vertices.push(new THREE.Vector3( 735-479,  (i+1)*26-1, 365-284));   // index 10 0     //177
+			 //  geom.vertices.push(new THREE.Vector3( 564-479,  (i+1)*26-1, 320-284));   // index 11 1
+			var pared4  = new THREE.CubeGeometry(178,11,2);
+			var paredi3 = new THREE.Mesh(pared4, cosaMaterial);
+			paredi3.position.set( 650-479,  2*26-1-5.5, 343-284);
+			paredi3.rotation.y-=(Math.PI/180)*15;
+			group5.add( paredi3 ); 
+			
+			var object510 = new THREE.Mesh(pared4, cosaMaterial);
+			object510.position.set( 650-479,  3*26-1-5.5, 343-284);
+			object510.rotation.y-=(Math.PI/180)*15;
+			group5.add( object510 ); 
+			
+			var object511 = new THREE.Mesh(pared4, cosaMaterial);
+			object511.position.set( 650-479,  4*26-1-5.5, 343-284);
+			object511.rotation.y-=(Math.PI/180)*15;
+			group5.add( object511 ); 
+			
+			//PAREDCITAS DE DAE
+			// geom.vertices.push(new THREE.Vector3(  394-479,  i*26+4, 246-284));   // index 1	-----------(1)
+		    // geom.vertices.push(new THREE.Vector3( 490-479, (i+1)*26-1, 191-284));   // index 12 2  ----------(1) // 110
+			var pared5  = new THREE.CubeGeometry(110,41,6);
+			var paredi4 = new THREE.Mesh(pared5, cosaMaterial);
+			paredi4.position.set( 442-479,  3*26-1-17.5, 219-284);
+			paredi4.rotation.y-=(Math.PI/180)*-30.5;
+			paredi4.rotation.z-=(Math.PI/180)*5;
+			paredi4.rotation.x-=(Math.PI/180)*-5;
+			group5.add( paredi4 ); 
+			
+			//geom.vertices.push(new THREE.Vector3(  467-479,  i*26+4,  376-284));   // index 2	-------------(2)
+			// geom.vertices.push(new THREE.Vector3( 564-479,  (i+1)*26-1, 320-284));   // index 11 1   ----------(2)  //112
+			var pared6  = new THREE.CubeGeometry(112,41,6);
+			 var paredi5 = new THREE.Mesh(pared6, cosaMaterial);
+			paredi5.position.set( 516-479,  3*26-1-17.5, 348-284);
+			paredi5.rotation.y-=(Math.PI/180)*-209.7;
+			paredi5.rotation.z-=(Math.PI/180)*4;
+			paredi5.rotation.x-=(Math.PI/180)*13;
+			group5.add( paredi5 ); 
+			
+			
+			
+			//PEDACITOS ANTES DE DAE
+			// geom.vertices.push(new THREE.Vector3(  467-479,  i*26+4,  376-284));   // index 2	-------------(2)
+           // geom.vertices.push(new THREE.Vector3( 478-479,  i*26+4,  400-284 ));   // index 3  //27 
+			var pared7  = new THREE.CubeGeometry(27.5,11,2);
+			 var paredi6 = new THREE.Mesh(pared7, cosaMaterial);
+			paredi6.position.set( 473-479,  1*26-1, 388-284);
+			paredi6.rotation.y-=(Math.PI/180)*67;
+			group5.add( paredi6 ); 
+			
+			var object512 = new THREE.Mesh(pared7, cosaMaterial);
+			object512.position.set( 473-479,  0*26-1, 388-284);
+			object512.rotation.y-=(Math.PI/180)*67;
+			group5.add( object512 ); 
+			
+			var object513 = new THREE.Mesh(pared7, cosaMaterial);
+			object513.position.set( 473-479,  -1*26-1, 388-284);
+			object513.rotation.y-=(Math.PI/180)*67;
+			group5.add( object513 ); 
+			
+			var object514 = new THREE.Mesh(pared7, cosaMaterial);
+			object514.position.set( 473-479,  2*26-1, 388-284);
+			object514.rotation.y-=(Math.PI/180)*67;
+			group5.add( object514 ); 
+			
+			var object515 = new THREE.Mesh(pared7, cosaMaterial);
+			object515.position.set( 473-479,  3*26-1, 388-284);
+			object515.rotation.y-=(Math.PI/180)*67;
+			group5.add( object515 ); 
+			
+		
+			
+			
+			//geom.vertices.push(new THREE.Vector3( 490-479, (i+1)*26-1, 191-284));   // index 12 2  ----------(1)
+			 //geom.vertices.push(new THREE.Vector3( 470-479,  (i+1)*26-1, 152-284));   // index 13 3 //44
+			 var pared8  = new THREE.CubeGeometry(45,11,2);
+			 var paredi7 = new THREE.Mesh(pared8, cosaMaterial);
+			paredi7.position.set( 480-479,  1*26-1-5.5, 172-284);
+			paredi7.rotation.y-=(Math.PI/180)*63;
+			group5.add( paredi7 ); 
+			
+			var object516 = new THREE.Mesh(pared8, cosaMaterial);
+			object516.position.set( 480-479,  0*26-1-5.5, 172-284);
+			object516.rotation.y-=(Math.PI/180)*63;
+			group5.add( object516 ); 
+			
+			var object517 = new THREE.Mesh(pared8, cosaMaterial);
+			object517.position.set( 480-479,  2*26-1-5.5, 172-284);
+			object517.rotation.y-=(Math.PI/180)*63;
+			group5.add( object517 ); 
+			
+			var object518 = new THREE.Mesh(pared8, cosaMaterial);
+			object518.position.set( 480-479,  3*26-1-5.5, 172-284);
+			object518.rotation.y-=(Math.PI/180)*63;
+			group5.add( object518 ); 
+			
+			var object520 = new THREE.Mesh(pared8, cosaMaterial);
+			object520.position.set( 480-479,  4*26-1-5.5, 172-284);
+			object520.rotation.y-=(Math.PI/180)*63;
+			group5.add( object520 ); 
+			
+			//PEDAZOS DE FUERA DE EDIFICIOS ESTAS LLEVAN CRISTAL!!!!!!! 
+
+			 var pared9  = new THREE.CubeGeometry(153,11,2);
+			 var paredi8 = new THREE.Mesh(pared9, cosaMaterial);
+			paredi8.position.set( 283-479,  1*26-1-.5, 267-284);
+			paredi8.rotation.y-=(Math.PI/180)*18;
+			group5.add( paredi8 ); 
+			
+			var object521 = new THREE.Mesh(pared9, cosaMaterial);
+			object521.position.set( 283-479,  2*26-1-.5, 267-284);
+			object521.rotation.y-=(Math.PI/180)*18;
+			group5.add( object521 ); 
+			
+			var object522 = new THREE.Mesh(pared9, cosaMaterial);
+			object522.position.set( 283-479,  3*26-1-.5, 267-284);
+			object522.rotation.y-=(Math.PI/180)*18;
+			group5.add( object522 ); 
+			
+			var object523a = new THREE.Mesh(pared9, cosaMaterial);
+			object523a.position.set( 283-479,  4*26-1-.5, 267-284);
+			object523a.rotation.y-=(Math.PI/180)*18;
+			group5.add( object523a ); 
+			
+			//CRISTAL
+			 var pared1009  = new THREE.CubeGeometry(153,15,2);
+			var object600 = new THREE.Mesh(pared1009, meshMaterial2);
+			object600.position.set( 283-479,  3*26-1-13.5, 267-284);
+			object600.rotation.y-=(Math.PI/180)*18;
+			group5.add( object600 );
+			
+			var object601 = new THREE.Mesh(pared1009, meshMaterial2);
+			object601.position.set( 283-479,  2*26-1-13.5, 267-284);
+			object601.rotation.y-=(Math.PI/180)*18;
+			group5.add( object601 );
+			
+			var object602 = new THREE.Mesh(pared1009, meshMaterial2);
+			object602.position.set( 283-479,  4*26-1-13.5, 267-284);
+			object602.rotation.y-=(Math.PI/180)*18;
+			group5.add( object602 );
+			
+			//	geom.vertices.push(new THREE.Vector3( 596-479, (i+1)*26-1, 283-284));   // index 18 8 
+			//	geom.vertices.push(new THREE.Vector3( 750-479, (i+1)*26-1, 321-284));   // index 19 9 //159
+			var pared10  = new THREE.CubeGeometry(159,11,2);
+			 var paredi9 = new THREE.Mesh(pared10, cosaMaterial);
+			paredi9.position.set( 673-479,  2*26-1-5.5, 302-284);
+			paredi9.rotation.y-=(Math.PI/180)*14;
+			group5.add( paredi9 ); 
+			
+			var object523 = new THREE.Mesh(pared10, cosaMaterial);
+			object523.position.set( 673-479,  3*26-1-5.5, 302-284);
+			object523.rotation.y-=(Math.PI/180)*14;
+			group5.add( object523 ); 
+			
+			var object524 = new THREE.Mesh(pared10, cosaMaterial);
+			object524.position.set( 673-479,  4*26-1-5.5, 302-284);
+			object524.rotation.y-=(Math.PI/180)*14;
+			group5.add( object524 ); 
+			
+			var object524a = new THREE.Mesh(pared10, cosaMaterial);
+			object524a.position.set( 673-479,  5*26-1-5.5, 302-284);
+			object524a.rotation.y-=(Math.PI/180)*14;
+			group5.add( object524a ); 
+			
+			//CRISTAL
+			
+			var pared1010  = new THREE.CubeGeometry(159,15,2);
+			
+			var object603 = new THREE.Mesh(pared1010, meshMaterial2);
+			object603.position.set( 673-479,  4*26-1-18.5, 302-284);
+			object603.rotation.y-=(Math.PI/180)*14;
+			group5.add( object603 ); 
+			
+			var object604 = new THREE.Mesh(pared1010, meshMaterial2);
+			object604.position.set( 673-479,  3*26-1-18.5, 302-284);
+			object604.rotation.y-=(Math.PI/180)*14;
+			group5.add( object604 );
+			
+			var object605 = new THREE.Mesh(pared1010, meshMaterial2);
+			object605.position.set( 673-479,  5*26-1-18.5, 302-284);
+			object605.rotation.y-=(Math.PI/180)*14;
+			group5.add( object605 );
+			
+			
+			
+			//PEDAZOS DE CENTRO FUERA DEL TEC
+			//geom.vertices.push(new THREE.Vector3( 410-479,  i*26+4,  385-284));   // index 7
+			//geom.vertices.push(new THREE.Vector3( 355-479,  i*26+4,  290-284));   // index 8 //110
+			var pared11  = new THREE.CubeGeometry(110,11,2);
+			 var paredi10 = new THREE.Mesh(pared11, cosaMaterial);
+			paredi10.position.set( 383-479,  1*26-1-.5, 338-284);
+			paredi10.rotation.y-=(Math.PI/180)*60;
+			group5.add( paredi10 );
+			
+			var object525 = new THREE.Mesh(pared11, cosaMaterial);
+			object525.position.set( 383-479,  2*26-1-.5, 338-284);
+			object525.rotation.y-=(Math.PI/180)*60;
+			group5.add( object525 ); 
+			
+			var object526 = new THREE.Mesh(pared11, cosaMaterial);
+			object526.position.set( 383-479,  3*26-1-.5, 338-284);
+			object526.rotation.y-=(Math.PI/180)*60;
+			group5.add( object526 ); 
+			
+			var object526a = new THREE.Mesh(pared11, cosaMaterial);
+			object526a.position.set( 383-479,  4*26-1-.5, 338-284);
+			object526a.rotation.y-=(Math.PI/180)*60;
+			group5.add( object526a ); 
+			
+			//CRISTAL
+			var pared1011  = new THREE.CubeGeometry(110,15,2);
+			 var paredi606 = new THREE.Mesh(pared1011, meshMaterial2);
+			paredi606.position.set( 383-479,  2*26-1-13.5, 338-284);
+			paredi606.rotation.y-=(Math.PI/180)*60;
+			group5.add( paredi606 );
+			
+			 var paredi607 = new THREE.Mesh(pared1011, meshMaterial2);
+			paredi607.position.set( 383-479,  3*26-1-13.5, 338-284);
+			paredi607.rotation.y-=(Math.PI/180)*60;
+			group5.add( paredi607 );
+			
+			 var paredi608 = new THREE.Mesh(pared1011, meshMaterial2);
+			paredi608.position.set( 383-479,  4*26-1-13.5, 338-284);
+			paredi608.rotation.y-=(Math.PI/180)*60;
+			group5.add( paredi608 );
+			
+			 
+			 //geom.vertices.push(new THREE.Vector3( 543-479, (i+1)*26-1, 185-284));   // index 17 7
+			//geom.vertices.push(new THREE.Vector3( 596-479, (i+1)*26-1, 283-284));   // index 18 8 //112
+			var pared12  = new THREE.CubeGeometry(112,11,2);
+			 var paredi11 = new THREE.Mesh(pared12, cosaMaterial);
+			paredi11.position.set( 570-479,  2*26-1-5.5, 234-284);
+			paredi11.rotation.y-=(Math.PI/180)*62;
+			group5.add( paredi11 );
+			
+			var object527 = new THREE.Mesh(pared12, cosaMaterial);
+			object527.position.set( 570-479,  3*26-1-5.5, 234-284);
+			object527.rotation.y-=(Math.PI/180)*62;
+			group5.add( object527 ); 
+			
+			var object528 = new THREE.Mesh(pared12, cosaMaterial);
+			object528.position.set( 570-479,  4*26-1-5.5, 234-284);
+			object528.rotation.y-=(Math.PI/180)*62;
+			group5.add( object528 ); 
+			
+			var object528a = new THREE.Mesh(pared12, cosaMaterial);
+			object528a.position.set( 570-479,  5*26-1-5.5, 234-284);
+			object528a.rotation.y-=(Math.PI/180)*62;
+			group5.add( object528a );
+			
+			//Cristales 
+			
+			var pared1012  = new THREE.CubeGeometry(112,15,2);
+			 var paredi609 = new THREE.Mesh(pared1012, meshMaterial2);
+			paredi609.position.set( 570-479,  3*26-1-18.5, 234-284);
+			paredi609.rotation.y-=(Math.PI/180)*62;
+			group5.add( paredi609 );
+			
+			var paredi610 = new THREE.Mesh(pared1012, meshMaterial2);
+			paredi610.position.set( 570-479,  4*26-1-18.5, 234-284);
+			paredi610.rotation.y-=(Math.PI/180)*62;
+			group5.add( paredi610 );
+			
+			var paredi611 = new THREE.Mesh(pared1012, meshMaterial2);
+			paredi611.position.set( 570-479,  5*26-1-18.5, 234-284);
+			paredi611.rotation.y-=(Math.PI/180)*62;
+			group5.add( paredi611 );
+			
+			//PICOS de fuera
+
+			var pared13  = new THREE.CubeGeometry(54,11,2);
+			 var paredi12 = new THREE.Mesh(pared13, cosaMaterial);
+			paredi12.position.set( 388-479,  -1*26-1-.5, 401-284);
+			paredi12.rotation.y-=(Math.PI/180)*-35;
+			group5.add( paredi12 );
+			
+			var object529 = new THREE.Mesh(pared13, cosaMaterial);
+			object529.position.set( 388-479,  0*26-1-.5, 401-284);
+			object529.rotation.y-=(Math.PI/180)*-35;
+			group5.add( object529 ); 
+			
+			var object530 = new THREE.Mesh(pared13, cosaMaterial);
+			object530.position.set( 388-479,  1*26-1-.5, 401-284);
+			object530.rotation.y-=(Math.PI/180)*-35;
+			group5.add( object530 ); 
+			
+			var object531 = new THREE.Mesh(pared13, cosaMaterial);
+			object531.position.set( 388-479,  2*26-1-.5, 401-284);
+			object531.rotation.y-=(Math.PI/180)*-35;
+			group5.add( object531 ); 
+			
+			var object532 = new THREE.Mesh(pared13, cosaMaterial);
+			object532.position.set( 388-479,  3*26-1-.5, 401-284);
+			object532.rotation.y-=(Math.PI/180)*-35;
+			group5.add( object532 ); 
+			
+			var object532a = new THREE.Mesh(pared13, cosaMaterial);
+			object532a.position.set( 388-479,  4*26-1-.5, 401-284);
+			object532a.rotation.y-=(Math.PI/180)*-35;
+			group5.add( object532a ); 
+			
+			//CRISTAL
+			var pared1013  = new THREE.CubeGeometry(54,15,2);
+			 var paredi612 = new THREE.Mesh(pared1013, meshMaterial2);
+			paredi612.position.set( 388-479,  0*26-1-13.5, 401-284);
+			paredi612.rotation.y-=(Math.PI/180)*-35;
+			group5.add( paredi612 );
+			
+			var paredi613 = new THREE.Mesh(pared1013, meshMaterial2);
+			paredi613.position.set( 388-479,  1*26-1-13.5, 401-284);
+			paredi613.rotation.y-=(Math.PI/180)*-35;
+			group5.add( paredi613 );
+			
+			var paredi614 = new THREE.Mesh(pared1013, meshMaterial2);
+			paredi614.position.set( 388-479,  2*26-1-13.5, 401-284);
+			paredi614.rotation.y-=(Math.PI/180)*-35;
+			group5.add( paredi614 );
+			
+			var paredi615 = new THREE.Mesh(pared1013, meshMaterial2);
+			paredi615.position.set( 388-479,  3*26-1-13.5, 401-284);
+			paredi615.rotation.y-=(Math.PI/180)*-35;
+			group5.add( paredi615 );
+			
+			var paredi616 = new THREE.Mesh(pared1013, meshMaterial2);
+			paredi616.position.set( 388-479,  4*26-1-13.5, 401-284);
+			paredi616.rotation.y-=(Math.PI/180)*-35;
+			group5.add( paredi616 );
+			
+			
+		//	geom.vertices.push(new THREE.Vector3( 613-479, (i+1)*26-1, 143-284));   // index 16 6
+		//	geom.vertices.push(new THREE.Vector3( 543-479, (i+1)*26-1, 185-284));   // index 17 7  //82
+			
+			var pared14  = new THREE.CubeGeometry(82,11,2);
+			 var paredi13 = new THREE.Mesh(pared14, cosaMaterial);
+			paredi13.position.set( 578-479,  0*26-1-5.5, 164-284);
+			paredi13.rotation.y-=(Math.PI/180)*-32;
+			group5.add( paredi13 );
+			
+			var object533 = new THREE.Mesh(pared14, cosaMaterial);
+			object533.position.set( 578-479,  1*26-1-5.5, 164-284);
+			object533.rotation.y-=(Math.PI/180)*-32;
+			group5.add( object533 ); 
+			
+			var object534 = new THREE.Mesh(pared14, cosaMaterial);
+			object534.position.set( 578-479,  2*26-1-5.5, 164-284);
+			object534.rotation.y-=(Math.PI/180)*-32;
+			group5.add( object534 ); 
+			
+			var object535 = new THREE.Mesh(pared14, cosaMaterial);
+			object535.position.set( 578-479,  3*26-1-5.5, 164-284);
+			object535.rotation.y-=(Math.PI/180)*-32;
+			group5.add( object535 ); 
+			
+			var object536 = new THREE.Mesh(pared14, cosaMaterial);
+			object536.position.set( 578-479,  4*26-1-5.5, 164-284);
+			object536.rotation.y-=(Math.PI/180)*-32;
+			group5.add( object536 ); 
+			
+			var object536a = new THREE.Mesh(pared14, cosaMaterial);
+			object536a.position.set( 578-479,  5*26-1-5.5, 164-284);
+			object536a.rotation.y-=(Math.PI/180)*-32;
+			group5.add( object536a ); 
+			
+			//CRISTAL
+			var pared1014  = new THREE.CubeGeometry(82,15,2);
+			 var paredi617 = new THREE.Mesh(pared1014, meshMaterial2);
+			paredi617.position.set( 578-479,  1*26-1-18.5, 164-284);
+			paredi617.rotation.y-=(Math.PI/180)*-32;
+			group5.add( paredi617 );
+			
+			var paredi618 = new THREE.Mesh(pared1014, meshMaterial2);
+			paredi618.position.set( 578-479,  2*26-1-18.5, 164-284);
+			paredi618.rotation.y-=(Math.PI/180)*-32;
+			group5.add( paredi618 );
+			
+			var paredi619 = new THREE.Mesh(pared1014, meshMaterial2);
+			paredi619.position.set( 578-479,  3*26-1-18.5, 164-284);
+			paredi619.rotation.y-=(Math.PI/180)*-32;
+			group5.add( paredi619 );
+			
+			var paredi620 = new THREE.Mesh(pared1014, meshMaterial2);
+			paredi620.position.set( 578-479,  4*26-1-18.5, 164-284);
+			paredi620.rotation.y-=(Math.PI/180)*-32;
+			group5.add( paredi620 );
+			
+			var paredi621 = new THREE.Mesh(pared1014, meshMaterial2);
+			paredi621.position.set( 578-479,  5*26-1-18.5, 164-284);
+			paredi621.rotation.y-=(Math.PI/180)*-32;
+			group5.add( paredi621 );
+			
+			
+			//Piecezotas de afuera
+
+			
+			var pared15  = new THREE.CubeGeometry(279,11,2);
+			 var paredi14 = new THREE.Mesh(pared15, cosaMaterial);
+			paredi14.position.set( 500-479,  -1*26-1-.5, 456-284);
+			paredi14.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( paredi14 );
+			
+			var object537 = new THREE.Mesh(pared15, cosaMaterial);
+			object537.position.set( 500-479,  0*26-1-.5, 456-284);
+			object537.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( object537 ); 
+			
+			var object538 = new THREE.Mesh(pared15, cosaMaterial);
+			object538.position.set( 500-479,  1*26-1-.5, 456-284);
+			object538.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( object538 ); 
+			
+			var object539 = new THREE.Mesh(pared15, cosaMaterial);
+			object539.position.set( 500-479,  2*26-1-.5, 456-284);
+			object539.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( object539 ); 
+			
+			var object540 = new THREE.Mesh(pared15, cosaMaterial);
+			object540.position.set( 500-479,  3*26-1-.5, 456-284);
+			object540.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( object540 ); 
+			
+			var object540a = new THREE.Mesh(pared15, cosaMaterial);
+			object540a.position.set( 500-479,  4*26-1-.5, 456-284);
+			object540a.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( object540a ); 
+			
+			//CRISTALES
+			
+			var pared1015  = new THREE.CubeGeometry(279,15,2);
+			 var paredi622 = new THREE.Mesh(pared1015, meshMaterial2);
+			paredi622.position.set( 500-479,  0*26-1-13.5, 456-284);
+			paredi622.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( paredi622 );
+			
+			var paredi623 = new THREE.Mesh(pared1015, meshMaterial2);
+			paredi623.position.set( 500-479,  1*26-1-13.5, 456-284);
+			paredi623.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( paredi623 );
+			
+			var paredi624 = new THREE.Mesh(pared1015, meshMaterial2);
+			paredi624.position.set( 500-479,  2*26-1-13.5, 456-284);
+			paredi624.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( paredi624 );
+			
+			var paredi625 = new THREE.Mesh(pared1015, meshMaterial2);
+			paredi625.position.set( 500-479,  3*26-1-13.5, 456-284);
+			paredi625.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( paredi625 );
+			
+			var paredi626 = new THREE.Mesh(pared1015, meshMaterial2);
+			paredi626.position.set( 500-479,  4*26-1-13.5, 456-284);
+			paredi626.rotation.y-=(Math.PI/180)*16.8;
+			group5.add( paredi626 );
+			
+			 //  geom.vertices.push(new THREE.Vector3( 350-479,  (i+1)*26-1, 70-284));   // index 15 5
+			//	geom.vertices.push(new THREE.Vector3( 613-479, (i+1)*26-1, 143-284));   // index 16 6  //273
+			var pared16  = new THREE.CubeGeometry(273,11,2);
+			 var paredi15 = new THREE.Mesh(pared16, cosaMaterial);
+			paredi15.position.set( 482-479,  0*26-1-5.5, 107-284);
+			paredi15.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi15 );
+			
+			var object541 = new THREE.Mesh(pared16, cosaMaterial);
+			object541.position.set( 482-479,  1*26-1-5.5, 107-284);
+			object541.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object541 ); 
+			
+			var object542 = new THREE.Mesh(pared16, cosaMaterial);
+			object542.position.set( 482-479,  2*26-1-5.5, 107-284);
+			object542.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object542 ); 
+			
+			var object543 = new THREE.Mesh(pared16, cosaMaterial);
+			object543.position.set( 482-479,  3*26-1-5.5, 107-284);
+			object543.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object543 ); 
+			
+			var object544 = new THREE.Mesh(pared16, cosaMaterial);
+			object544.position.set( 482-479,  4*26-1-5.5, 107-284);
+			object544.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object544 ); 
+			
+			var object544a = new THREE.Mesh(pared16, cosaMaterial);
+			object544a.position.set( 482-479,  5*26-1-5.5, 107-284);
+			object544a.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( object544a ); 
+			
+			//CRISTAL
+			var pared1017  = new THREE.CubeGeometry(273,15,2);
+			 var paredi627 = new THREE.Mesh(pared1017, meshMaterial2);
+			paredi627.position.set( 482-479,  1*26-1-18.5, 107-284);
+			paredi627.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi627 );
+			
+			var paredi628 = new THREE.Mesh(pared1017, meshMaterial2);
+			paredi628.position.set( 482-479,  2*26-1-18.5, 107-284);
+			paredi628.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi628 );
+			
+			var paredi629 = new THREE.Mesh(pared1017, meshMaterial2);
+			paredi629.position.set( 482-479,  3*26-1-18.5, 107-284);
+			paredi629.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi629 );
+			
+			var paredi630 = new THREE.Mesh(pared1017, meshMaterial2);
+			paredi630.position.set( 482-479,  4*26-1-18.5, 107-284);
+			paredi630.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi630 );
+			
+			var paredi631 = new THREE.Mesh(pared1017, meshMaterial2);
+			paredi631.position.set( 482-479,  5*26-1-18.5, 107-284);
+			paredi631.rotation.y-=(Math.PI/180)*15.5;
+			group5.add( paredi631 );
+			
+			//PEDACITOS INCLINADOS DE ULTIMOS DOS PISOS
+
+			var pared17  = new THREE.CubeGeometry(58,11,2);
+			 var paredi16 = new THREE.Mesh(pared17, cosaMaterial);
+			paredi16.position.set( 439-479,  -1*26-1-.5, 381-284);
+			paredi16.rotation.y-=(Math.PI/180)*-9;
+			group5.add( paredi16 );
+			
+			var object545 = new THREE.Mesh(pared17, cosaMaterial);
+			object545.position.set( 439-479,  0*26-1-.5, 381-284);
+			object545.rotation.y-=(Math.PI/180)*-9;
+			group5.add( object545 ); 
+			
+			var pared1017a  = new THREE.CubeGeometry(58,15,2);
+			 var paredi632 = new THREE.Mesh(pared1017a, meshMaterial2);
+			paredi632.position.set( 439-479,  0*26-1-13.5, 381-284);
+			paredi632.rotation.y-=(Math.PI/180)*-9;
+			group5.add( paredi632 );
+			
+			var pared1017b  = new THREE.CubeGeometry(58,26,2);
+			 var paredi633 = new THREE.Mesh(pared1017b, meshMaterial2);
+			paredi633.position.set( 439-479,  1*26-1-8, 381-284);
+			paredi633.rotation.y-=(Math.PI/180)*-9;
+			group5.add( paredi633 );
+			
+			//geom.vertices.push(new THREE.Vector3( 543-479, (i+1)*26-1, 185-284));   // index 17 7
+			//geom.vertices.push(new THREE.Vector3( 490-479, (i+1)*26-1, 191-284));   // index 12 2  ----------(1) //54
+			var pared18  = new THREE.CubeGeometry(54,11,2);
+			 var paredi17 = new THREE.Mesh(pared18, cosaMaterial);
+			paredi17.position.set( 517-479,  0*26-1-5.5, 188-284);
+			paredi17.rotation.y-=(Math.PI/180)*-6;
+			group5.add( paredi17 );
+			
+			var object546 = new THREE.Mesh(pared18, cosaMaterial);
+			object546.position.set( 517-479,  1*26-1-5.5, 188-284);
+			object546.rotation.y-=(Math.PI/180)*-6;
+			group5.add( object546 ); 
+			
+			var pared1018  = new THREE.CubeGeometry(54,15,2);
+			 var paredi634 = new THREE.Mesh(pared1018, meshMaterial2);
+			paredi634.position.set( 517-479,  1*26-1-18.5, 188-284);
+			paredi634.rotation.y-=(Math.PI/180)*-6;
+			group5.add( paredi634 );
+			
+			var pared19  = new THREE.CubeGeometry(149,11,2);
+			 var paredi18 = new THREE.Mesh(pared19, cosaMaterial);
+			paredi18.position.set( 431-479,  1*26-1-.4, 311-284);
+			paredi18.rotation.y-=(Math.PI/180)*60.5;
+			group5.add( paredi18 );
+			
+			 var paredi19 = new THREE.Mesh(pared19, cosaMaterial);
+			paredi19.position.set( 527-479,  4*26-1-5.5, 256-284);
+			paredi19.rotation.y-=(Math.PI/180)*60.5;
+			group5.add( paredi19 );
+			
+			//object 546
+			
+			group202 = new THREE.Object3D();		
+			group202= group200.clone();
+			group202.position.set(-36,0,-8.8);	
+			group5.add(group202);
+			
+			group203= group200.clone();
+			group204= group202.clone()
+			group205 = new THREE.Object3D();
+			group206 = new THREE.Object3D();
+			group207 = new THREE.Object3D();
+			group208 = new THREE.Object3D();
+			group209 = new THREE.Object3D();
+			group210 = new THREE.Object3D();
+			group211 = new THREE.Object3D();
+			
+			
+			group205.add(group203);
+			group205.add(group204);
+			
+			group205.position.set(0,26-1-.5,0);
+			
+			group206=group205.clone();
+			group206.position.set(0,2*26-1-.5,0);
+			
+			group207=group205.clone();
+			group207.position.set(-230,0,-213);
+			group207.rotation.y-=(Math.PI/180)*2;
+			
+			group208= group207.clone();
+			group208.position.set(-230,2*26-1-.5,-213);
+			
+			group209= group208.clone();
+			group209.position.set(-230,1*26-1-.5,-213);
+			
+			group210= group208.clone();
+			group210.position.set(-230,-1*26-1-.5,-213);
+			
+			group211= group208.clone();
+			group211.position.set(-230,-2*26-1-.5,-213);
+			
+			//OTRO EDIFICIO
+			group212 = new THREE.Object3D();
+			group213 = new THREE.Object3D();
+			group214 = new THREE.Object3D();
+			group215 = new THREE.Object3D();
+			group216 = new THREE.Object3D();
+			group217 = new THREE.Object3D();
+			group218 = new THREE.Object3D();
+			group219 = new THREE.Object3D();
+			group220 = new THREE.Object3D();
+			
+			
+			group212= group208.clone();
+			group212.position.set(0,5,9);
+			group212.rotation.y-=(Math.PI/180)*179.9;
+			
+			group213= group212.clone();
+			group213.position.set(0,26+3,9);
+			
+			group214= group212.clone();
+			group214.position.set(0,-1*26+3,9);
+			
+			//
+			group215= group205.clone();
+			group215.position.set(250,4,201);
+			group215.rotation.y-=(Math.PI/180)*180;
+			
+			group216= group215.clone();
+			group216.position.set(250,-1*26+3,201);
+			
+			group217= group215.clone();
+			group217.position.set(250,-2*26+3,201);
+			
+			group218= group215.clone();
+			group218.position.set(250,1*26+3,201);
+			
+			group219= group215.clone();
+			group219.position.set(250,-3*26+3,201);
+			
+			group5.add(group205);
+			group5.add(group206);
+			group5.add(group207);
+			group5.add(group208);
+			group5.add(group209);
+			group5.add(group210);
+			group5.add(group211);
+			group5.add(group212);
+			group5.add(group213);
+			group5.add(group214);
+			group5.add(group215);
+			group5.add(group216);
+			group5.add(group217);
+			group5.add(group218);
+			group5.add(group219);
+			
+			 
+			
+			   var object0 = new THREE.Mesh (geom2, cosaMateriala);
+			var object = new THREE.Mesh( geom0, cosaMateriala);
+            var object2 = new THREE.Mesh( geom3, meshMaterial3);
+			var object3 = new THREE.Mesh(geom0, cosaMateriala);
+			var object4 = new THREE.Mesh(geom3, meshMaterial3);
+			var object5 = new THREE.Mesh (geom2, cosaMateriala);
+			var object6 = new THREE.Mesh (geom0, cosaMateriala);
+			var object7 = new THREE.Mesh (geom3, meshMaterial3);
+			var object8 = new THREE.Mesh (geom0, cosaMateriala);
+			var object9 = new THREE.Mesh (geom3, meshMaterial3);
+			var object10 = new THREE.Mesh (geom2, cosaMateriala);
+			var object11 = new THREE.Mesh (geom0, cosaMateriala);
+			var object12 = new THREE.Mesh (geom3, meshMaterial3);
+			var object13 = new THREE.Mesh (geom0, cosaMateriala);
+			var object14 = new THREE.Mesh (geom3, meshMaterial3);
+			var object15 = new THREE.Mesh (geom2, cosaMateriala);
+			var object16 = new THREE.Mesh (geom0, cosaMateriala);
+			var object17 = new THREE.Mesh (geom3, meshMaterial3);
+			var object18 = new THREE.Mesh (geom0, cosaMateriala);
+			var object19 = new THREE.Mesh (geom3, meshMaterial3);
+			var object20 = new THREE.Mesh (geom2, cosaMateriala);
+			var object21 = new THREE.Mesh (geom0, cosaMateriala);
+			var object22 = new THREE.Mesh (geom3, meshMaterial3);
+			var object23 = new THREE.Mesh (geom0, cosaMateriala);
+			var object24 = new THREE.Mesh (geom3, meshMaterial3);
+			var object25 = new THREE.Mesh (geom2, cosaMateriala);
+			var object26 = new THREE.Mesh (geom0, cosaMateriala);
+			var object27 = new THREE.Mesh (geom3, meshMaterial3);
+			var object28 = new THREE.Mesh (geom0, cosaMateriala);
+			var object29 = new THREE.Mesh (geom3, meshMaterial3);
+			var object30 = new THREE.Mesh (geom2, cosaMateriala);
+
+            group = new THREE.Object3D();           // create an empty container
+			group2 = new THREE.Object3D();
+			group3 = new THREE.Object3D();
+			group4 = new THREE.Object3D();
+			
+			group6 = new THREE.Object3D();
+			//TORRE1
+			object0.position.y -= res;
+			object.position.y = 4- res;
+			object2.position.y +=13- res;
+			object3.position.y +=15- res;
+		
+			object4.position.y += 24- res;
+			object5.position.y += 26- res;
+			object6.position.y += 30- res;
+			object7.position.y += 39- res;
+			object8.position.y += 41- res;
+			object9.position.y += 50- res;
+			object10.position.y += 52- res;
+			object11.position.y += 56 - res;
+			object12.position.y += 65- res;
+			object13.position.y += 67- res;
+			object14.position.y += 76- res;
+			object15.position.y += 78- res;
+			object16.position.y += 82- res;
+			object17.position.y += 91- res;
+			object18.position.y += 93- res;
+			object19.position.y += 102- res;
+			object20.position.y += 104- res;
+			object21.position.y += 108- res;
+			object22.position.y += 117- res;
+			object23.position.y += 119- res;
+			object24.position.y += 128- res;
+			object25.position.y += 130- res;
+			object26.position.y += 134- res;
+			object27.position.y += 143- res;
+			object28.position.y += 145- res;
+			object29.position.y += 154- res;
+			object30.position.y += 156- res;
+			
+			group.add(object0);
+            group.add( object );                    // add a mesh with geometry to it
+			group.add( object2 );
+			group.add(object3);
+			group.add(object4);
+			group.add(object5);
+			group.add(object6);
+			group.add(object7);
+			group.add(object8);
+			group.add(object9); 
+			group.add(object10);
+			group.add(object11);
+			group.add(object12);
+			group.add(object13);
+			group.add(object14);
+			group.add(object15);
+			group.add(object16);
+			group.add(object17);
+			group.add(object18);
+			group.add(object19);
+			group.add(object20);
+			group.add(object21);
+			group.add(object22);
+			group.add(object23);
+			group.add(object24);
+			group.add(object25);
+			group.add(object26);
+			group.add(object27);
+			group.add(object28);
+			group.add(object29);
+			group.add(object30);
+
+			group.position.x = -140;
+			
+			group.position.z = 193.5;
+			group.rotation.y = -.0;
+
+            scene.add( group );                     // add the group to the scene                  
+			
+			
+			//TORRE 2
+			var oobject0 = new THREE.Mesh (geom2, cosaMateriala);
+			var oobject = new THREE.Mesh( geom0, cosaMateriala);
+            var oobject2 = new THREE.Mesh( geom3, meshMaterial3);
+			var oobject3 = new THREE.Mesh(geom0, cosaMateriala);
+			var oobject4 = new THREE.Mesh(geom3, meshMaterial3);
+			var oobject5 = new THREE.Mesh (geom2, cosaMateriala);
+			var oobject6 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject7 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject8 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject9 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject10 = new THREE.Mesh (geom2, cosaMateriala);
+			var oobject11 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject12 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject13 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject14 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject15 = new THREE.Mesh (geom2, cosaMateriala);
+			var oobject16 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject17 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject18 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject19 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject20 = new THREE.Mesh (geom2, cosaMateriala);
+			var oobject21 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject22 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject23 = new THREE.Mesh (geom0, cosaMateriala);
+			var oobject24 = new THREE.Mesh (geom3, meshMaterial3);
+			var oobject25 = new THREE.Mesh (geom2, cosaMateriala);
+			
+			
+			oobject0.position.y -= res;
+			oobject.position.y = 4- res;
+			oobject2.position.y +=13- res;
+			oobject3.position.y +=15- res;
+		
+			oobject4.position.y += 24- res;
+			oobject5.position.y += 26- res;
+			oobject6.position.y += 30- res;
+			oobject7.position.y += 39- res;
+			oobject8.position.y += 41- res;
+			oobject9.position.y += 50- res;
+			oobject10.position.y += 52- res;
+			oobject11.position.y += 56 - res;
+			oobject12.position.y += 65- res;
+			oobject13.position.y += 67- res;
+			oobject14.position.y += 76- res;
+			oobject15.position.y += 78- res;
+			oobject16.position.y += 82- res;
+			oobject17.position.y += 91- res;
+			oobject18.position.y += 93- res;
+			oobject19.position.y += 102- res;
+			oobject20.position.y += 104- res;
+			oobject21.position.y += 108- res;
+			oobject22.position.y += 117- res;
+			oobject23.position.y += 119- res;
+			oobject24.position.y += 128- res;
+			oobject25.position.y += 130- res;
+			
+			group2.add(oobject0);
+            group2.add( oobject );                    // add a mesh with geometry to it
+			group2.add( oobject2 );
+			group2.add(oobject3);
+			group2.add(oobject4);
+			group2.add(oobject5);
+			group2.add(oobject6);
+			group2.add(oobject7);
+			group2.add(oobject8);
+			group2.add(oobject9); 
+			group2.add(oobject10);
+			group2.add(oobject11);
+			group2.add(oobject12);
+			group2.add(oobject13);
+			group2.add(oobject14);
+			group2.add(oobject15);
+			group2.add(oobject16);
+			group2.add(oobject17);
+			group2.add(oobject18);
+			group2.add(oobject19);
+			group2.add(oobject20);
+		
+
+            scene.add( group2 );                     // add the group to the scene                  
+			group2.position.x = 264.1;
+			group2.position.z = -59.1;
+			group2.rotation.y = 3.3;
+			res = 108;
+			//TORRE 3
+			
+			var ooobject0 = new THREE.Mesh (geom2, cosaMateriala);
+			var ooobject = new THREE.Mesh( geom0, cosaMateriala);
+            var ooobject2 = new THREE.Mesh( geom3, meshMaterial3);
+			var ooobject3 = new THREE.Mesh(geom0, cosaMateriala);
+			var ooobject4 = new THREE.Mesh(geom3, meshMaterial3);
+			var ooobject5 = new THREE.Mesh (geom2, cosaMateriala);
+			var ooobject6 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject7 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject8 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject9 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject10 = new THREE.Mesh (geom2, cosaMateriala);
+			var ooobject11 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject12 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject13 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject14 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject15 = new THREE.Mesh (geom2, cosaMateriala);
+			var ooobject16 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject17 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject18 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject19 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject20 = new THREE.Mesh (geom2, cosaMateriala);
+			var ooobject21 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject22 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject23 = new THREE.Mesh (geom0, cosaMateriala);
+			var ooobject24 = new THREE.Mesh (geom3, meshMaterial3);
+			var ooobject25 = new THREE.Mesh (geom2, cosaMateriala);
+
+
+			ooobject0.position.y -= res;
+			ooobject.position.y = 4- res;
+			ooobject2.position.y +=13- res;
+			ooobject3.position.y +=15- res;
+		
+			ooobject4.position.y += 24- res;
+			ooobject5.position.y += 26- res;
+			ooobject6.position.y += 30- res;
+			ooobject7.position.y += 39- res;
+			ooobject8.position.y += 41- res;
+			ooobject9.position.y += 50- res;
+			ooobject10.position.y += 52- res;
+			ooobject11.position.y += 56 - res;
+			ooobject12.position.y += 65- res;
+			ooobject13.position.y += 67- res;
+			ooobject14.position.y += 76- res;
+			ooobject15.position.y += 78- res;
+			ooobject16.position.y += 82- res;
+			ooobject17.position.y += 91- res;
+			ooobject18.position.y += 93- res;
+			ooobject19.position.y += 102- res;
+			ooobject20.position.y += 104- res;
+			ooobject21.position.y += 108- res;
+			ooobject22.position.y += 117- res;
+			ooobject23.position.y += 119- res;
+			ooobject24.position.y += 128- res;
+			ooobject25.position.y += 130- res;
+			
+			group3.add(ooobject0);
+            group3.add( ooobject );                    // add a mesh with geometry to it
+			group3.add( ooobject2 );
+			group3.add(ooobject3);
+			group3.add(ooobject4);
+			group3.add(ooobject5);
+			group3.add(ooobject6);
+			group3.add(ooobject7);
+			group3.add(ooobject8);
+			group3.add(ooobject9); 
+			group3.add(ooobject10);
+			group3.add(ooobject11);
+			group3.add(ooobject12);
+			group3.add(ooobject13);
+			group3.add(ooobject14);
+			group3.add(ooobject15);
+			group3.add(ooobject16);
+			group3.add(ooobject17);
+			group3.add(ooobject18);
+			group3.add(ooobject19);
+			group3.add(ooobject20);
+			//group3.add(ooobject21);
+			//group3.add(ooobject22);
+			//group3.add(ooobject23);
+			//group3.add(ooobject24);
+			//group3.add(ooobject25);
+
+			
+
+            scene.add( group3 );                     // add the group to the scene                  
+			group3.position.x = -261.4;
+			group3.position.z = 62.4;
+			group3.rotation.y = -.0;
+			
+			//TORRE 4
+			
+			var oooobject0 = new THREE.Mesh (geom2, cosaMateriala);
+			var oooobject = new THREE.Mesh( geom0, cosaMateriala);
+            var oooobject2 = new THREE.Mesh( geom3, meshMaterial3);
+			var oooobject3 = new THREE.Mesh(geom0, cosaMateriala);
+			var oooobject4 = new THREE.Mesh(geom3, meshMaterial3);
+			var oooobject5 = new THREE.Mesh (geom2, cosaMateriala);
+			var oooobject6 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject7 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject8 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject9 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject10 = new THREE.Mesh (geom2, cosaMateriala);
+			var oooobject11 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject12 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject13 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject14 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject15 = new THREE.Mesh (geom2, cosaMateriala);
+			var oooobject16 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject17 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject18 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject19 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject20 = new THREE.Mesh (geom2, cosaMateriala);
+			var oooobject21 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject22 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject23 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject24 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject25 = new THREE.Mesh (geom2, cosaMateriala);
+			var oooobject26 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject27 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject28 = new THREE.Mesh (geom0, cosaMateriala);
+			var oooobject29 = new THREE.Mesh (geom3, meshMaterial3);
+			var oooobject30 = new THREE.Mesh (geom2, cosaMateriala);
+			
+			oooobject0.position.y -= res;
+			oooobject.position.y = 4- res;
+			oooobject2.position.y +=13- res;
+			oooobject3.position.y +=15- res;
+		
+			oooobject4.position.y += 24- res;
+			oooobject5.position.y += 26- res;
+			oooobject6.position.y += 30- res;
+			oooobject7.position.y += 39- res;
+			oooobject8.position.y += 41- res;
+			oooobject9.position.y += 50- res;
+			oooobject10.position.y += 52- res;
+			oooobject11.position.y += 56 - res;
+			oooobject12.position.y += 65- res;
+			oooobject13.position.y += 67- res;
+			oooobject14.position.y += 76- res;
+			oooobject15.position.y += 78- res;
+			oooobject16.position.y += 82- res;
+			oooobject17.position.y += 91- res;
+			oooobject18.position.y += 93- res;
+			oooobject19.position.y += 102- res;
+			oooobject20.position.y += 104- res;
+			oooobject21.position.y += 108- res;
+			oooobject22.position.y += 117- res;
+			oooobject23.position.y += 119- res;
+			oooobject24.position.y += 128- res;
+			oooobject25.position.y += 130- res;
+			oooobject26.position.y += 134- res;
+			oooobject27.position.y += 143- res;
+			oooobject28.position.y += 145- res;
+			oooobject29.position.y += 154- res;
+			oooobject30.position.y += 156- res;
+			
+			group4.add(oooobject0);
+            group4.add( oooobject );                    // add a mesh with geometry to it
+			group4.add( oooobject2 );
+			group4.add(oooobject3);
+			group4.add(oooobject4);
+			group4.add(oooobject5);
+			group4.add(oooobject6);
+			group4.add(oooobject7);
+			group4.add(oooobject8);
+			group4.add(oooobject9); 
+			group4.add(oooobject10);
+			group4.add(oooobject11);
+			group4.add(oooobject12);
+			group4.add(oooobject13);
+			group4.add(oooobject14);
+			group4.add(oooobject15);
+			group4.add(oooobject16);
+			group4.add(oooobject17);
+			group4.add(oooobject18);
+			group4.add(oooobject19);
+			group4.add(oooobject20);
+			group4.add(oooobject21);
+			group4.add(oooobject22);
+			group4.add(oooobject23);
+			group4.add(oooobject24);
+			group4.add(oooobject25);
+			group4.add(oooobject26);
+			group4.add(oooobject27);
+			group4.add(oooobject28);
+			group4.add(oooobject29);
+			group4.add(oooobject30);
+
+			
+
+            scene.add( group4 );                     // add the group to the scene                  
+			group4.position.x = 162.3;
+			group4.position.z = -191.5;
+			group4.rotation.y = 3.3;
+			
+            var obbject = new THREE.Mesh( geom, cosaMateriala);
+            var obbject2 = new THREE.Mesh( geom, meshMaterial);
+			var obbject3 = new THREE.Mesh( geoma, cosaMaterial200);
+			var obbject4 = new THREE.Mesh( geoma2, cosaMaterial300);
+                    // create an empty container
+            group5.add( obbject ); 
+			group5.add( obbject3 );  
+			group5.add( obbject4 );      
+			  // add a mesh with geometry to it
+            //group.add( obbject2 );                   // add a mesh with geometry to it
+        
+            obbject2.position.y -=10;
+			group5.rotation.x = Math.PI;
+            scene.add( group5 );                     // add the group to the scene
+
+			 var pisodae = new THREE.Mesh (geom5, cosaMateriala);
+			var barandaldae = new THREE.Mesh( geom6, cosaMateriala);
+            var cristaldae = new THREE.Mesh( geom7, meshMaterial2);
+			var techodae = new THREE.Mesh(geom5, cosaMateriala);
+			
+			pisodae.position.y += 31- res;
+			barandaldae.position.y += 34- res;
+			cristaldae.position.y += 43- res;
+			techodae.position.y += 57- res;
+            
+			group6.add(pisodae);
+			group6.add(barandaldae);
+			group6.add(cristaldae);
+			group6.add(techodae);
+			
+			group6.position.x = 0;
+			group6.position.z = 0;
+			scene.add(group6);
+            
+			//nave
+			
+			var punta = new THREE.Mesh(geom3v, cosaMaterial6);
+			xwing.add(punta);
+			var cab = new THREE.Mesh( geomv, vidrio);
+			xwing.add(cab);
+			var cab2 = new THREE.Mesh(geom2v, vidrio);
+			cab2.position.x -= 4;
+			cab2.position.y -= 2.5;
+			gcabina.add(cab2);
+			gcabina.position.x += 4;
+			gcabina.position.y += 2.5;
+			xwing.add(gcabina);
+			//cola
+			var cola = new THREE.Mesh(new THREE.CubeGeometry(7.51,4.08,2.8), cosaMaterialx);
+			var cola1 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterialx);
+			cola1.rotation.x -= 0.218166;
+			cola1.position.z += .65;
+			cola1.position.y += .8035;
+			var cola2 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterialx);
+			cola2.rotation.x += 0.218166;
+			cola2.position.z += .65;
+			cola2.position.y -= .8035;
+			var cola3 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterialx);
+			cola3.rotation.x += 0.218166;
+			cola3.position.z -= .65;
+			cola3.position.y += .8035;
+			var cola4 = new THREE.Mesh(new THREE.CubeGeometry(7.5,2.1,2),cosaMaterialx);
+			cola4.rotation.x -= 0.218166;
+			cola4.position.z -= .65;
+			cola4.position.y -= .8035;
+			var cola5 = new THREE.Mesh(new THREE.CubeGeometry(7.5,1.9,1.42),cosaMaterialx);
+			cola5.rotation.x -= 0.219166;
+			cola5.position.z += .475;
+			cola5.position.y -= 1.275;
+			var cola6 = new THREE.Mesh(new THREE.CubeGeometry(7.5,1.9,1.42),cosaMaterialx);
+			cola6.rotation.x += 0.219166;
+			cola6.position.z -= .475;
+			cola6.position.y -= 1.275;
+			
+			var droid = new THREE.Mesh(new THREE.SphereGeometry(.8,15,14),cosaMaterial9);
+			droid.position.y += 2.4;
+			droid.position.x += 2.5;
+			xwing.add(droid);
+			
+			var dro = new THREE.Mesh(new THREE.CylinderGeometry(.81,.81,2,20,8,false), cosaMaterial8);
+			dro.position.x += 2.5;
+			dro.position.y += 1.35;
+			xwing.add(dro);
+			//ala
+			var btub = new THREE.Mesh(geom4v, cosaMaterialx);
+			btub.position.y -= 1;
+			
+			var btub2 = new THREE.Mesh(geom4v, cosaMaterialx);
+			btub2.rotation.z += 3.14159;
+			btub2.position.y += 1.6;
+			btub2.position.z +=0;
+			
+			var btub3 = new THREE.Mesh(geom4v, cosaMaterialx);
+			btub3.rotation.z += 3.14159;
+			btub3.position.y += 1.6;
+			
+			var btub4 = new THREE.Mesh(geom4v, cosaMaterialx);
+			btub4.position.y -= 1;
+			
+			var uala = new THREE.Mesh(new THREE.CubeGeometry(2.5,.2,1),cosaMaterialx);
+			uala.position.z += 2;
+			uala.position.y += .3;
+			var ala = new THREE.Mesh(new THREE.CubeGeometry(4,.2,2),cosaMaterialx);
+			ala.position.z += 3.1;
+			ala.position.y += .3;
+			var ala1 = new THREE.Mesh(new THREE.CubeGeometry(3,.2,7.8),cosaMaterial2);
+			ala1.position.z += 8.0;
+			ala1.position.y += .3;
+			ala1.position.x += .5;
+			var ala2 = new THREE.Mesh(new THREE.CubeGeometry(1.5,.21,8),cosaMaterial3);
+			ala2.rotation.y += 0.195799;
+			ala2.position.y += .3;
+			ala2.position.x -= 1.05;
+			ala2.position.z += 7.8;
+			var prop = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterialx);
+			prop.rotation.z += 1.57079;
+			prop.position.z += 3.1;
+			prop.position.y += 1.4;
+			var mprop = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial5);
+			mprop.rotation.z += 1.57079;
+			mprop.position.z += 3.1;
+			mprop.position.y += 1.4;
+			mprop.position.x -= 3.5;
+			var tub = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterialx);
+			tub.rotation.z += 1.57079;
+			tub.position.z += 11.7;
+			tub.position.y += .7;
+			tub.position.x +=.4;
+			var las = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las.rotation.z += 1.57079;
+			las.position.z += 11.7;
+			las.position.y += .7;
+			las.position.x +=6.4;
+			var tub2 = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterialx);
+			tub2.rotation.z += 1.57079;
+			tub2.position.z += 11.7;
+			tub2.position.y -= 0;
+			tub2.position.x +=.4;
+			var las2 = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las2.rotation.z += 1.57079;
+			las2.position.z += 11.7;
+			las2.position.y -= 0;
+			las2.position.x +=6.4;
+			var tub3 = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterialx);
+			tub3.rotation.z += 1.57079;
+			tub3.position.z += 11.7;
+			tub3.position.y -= .1;
+			tub3.position.x +=.4;
+			var las3 = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las3.rotation.z += 1.57079;
+			las3.position.z += 11.7;
+			las3.position.y -= .1;
+			las3.position.x +=6.4;
+			var tub4 = new THREE.Mesh(new THREE.CylinderGeometry(.3,.3,4,16,3,false), cosaMaterialx);
+			tub4.rotation.z += 1.57079;
+			tub4.position.z += 11.7;
+			tub4.position.y += .7;
+			tub4.position.x +=.4;
+			var las4 = new THREE.Mesh(new THREE.CylinderGeometry(.15,.05,8,16,3,false), cosaMaterial4);
+			las4.rotation.z += 1.57079;
+			las4.position.z += 11.7;
+			las4.position.y += .7;
+			las4.position.x +=6.4;
+			var prop2 = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterialx);
+			prop2.rotation.z += 1.57079;
+			prop2.position.z += 3.1;
+			prop2.position.y -= .8;
+			var mprop2 = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial5);
+			mprop2.rotation.z += 1.57079;
+			mprop2.position.z += 3.1;
+			mprop2.position.y -= .8;
+			mprop2.position.x -= 3.5;
+			var prop3 = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterialx);
+			prop3.rotation.z += 1.57079;
+			prop3.position.z += 3.1;
+			prop3.position.y -= .8;
+			var mprop3 = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial5);
+			mprop3.rotation.z += 1.57079;
+			mprop3.position.z += 3.1;
+			mprop3.position.y -= .8;
+			mprop3.position.x -= 3.5;
+			var prop4 = new THREE.Mesh(new THREE.CylinderGeometry(1,1,4,16,3,false), cosaMaterialx);
+			prop4.rotation.z += 1.57079;
+			prop4.position.z += 3.1;
+			prop4.position.y += 1.4;
+			var mprop4 = new THREE.Mesh(new THREE.CylinderGeometry(.6,.6,3,16,3,false), cosaMaterial5);
+			mprop4.rotation.z += 1.57079;
+			mprop4.position.z += 3.1;
+			mprop4.position.y += 1.4;
+			mprop4.position.x -= 3.5;
+			//cabina
+			var fren3 = new THREE.Mesh(new THREE.CubeGeometry(5,1.4,2.3),cosaMaterial7);//en este poner la textura de adentro de la cabina
+			fren3.position.x += 6.2;
+			fren3.position.y += .85;
+			xwing.add(fren3);
+			var fren4 = new THREE.Mesh(new THREE.CubeGeometry(10.5,1.3,1.1),cosaMaterialx);
+			fren4.rotation.z -= .028;
+			fren4.position.x += 13.95;
+			fren4.position.y += 0.8;
+			xwing.add(fren4);
+			var fren9 = new THREE.Mesh(new THREE.CubeGeometry(15.6,1.3,1),cosaMaterialx);
+			fren9.rotation.z += .05;
+			fren9.position.x += 11.35;
+			fren9.position.y -= 0.62;
+			xwing.add(fren9);
+			var fren5 = new THREE.Mesh(new THREE.CubeGeometry(10.5,1.3,1.1),cosaMaterialx);
+			fren5.rotation.y -= .06;
+			fren5.rotation.z -= .028;
+			fren5.position.x += 13.95;
+			fren5.position.y += .79;
+			fren5.position.z -= .28;
+			xwing.add(fren5);
+			var fren6 = new THREE.Mesh(new THREE.CubeGeometry(10.5,1.3,1.1),cosaMaterialx);
+			fren6.rotation.y += .06;
+			fren6.rotation.z -= .028;
+			fren6.position.x += 13.95;
+			fren6.position.y += .79;
+			fren6.position.z += .28;
+			xwing.add(fren6);
+			var fren10 = new THREE.Mesh(new THREE.CubeGeometry(10.5,.7,1.1),cosaMaterialx);
+			fren10.rotation.x -= 0.299166;
+			fren10.rotation.z += 0.07;
+			fren10.rotation.y += .06;
+			fren10.position.z += .55;
+			fren10.position.y -= .8;
+			fren10.position.x += 8.5;
+			xwing.add(fren10);
+			var fren11 = new THREE.Mesh(new THREE.CubeGeometry(10.5,.7,1.1),cosaMaterialx);
+			fren11.rotation.x += 0.299166;
+			fren11.rotation.z += .07;
+			fren11.rotation.y -= .06;
+			fren11.position.z -= .55;
+			fren11.position.y -= .8;
+			fren11.position.x += 8.5;
+			xwing.add(fren11);
+			//Costados de frente
+			var fren = new THREE.Mesh(new THREE.CubeGeometry(15.5,1.6,1.2),cosaMaterial2);
+			fren.rotation.x += 0.218166;
+			fren.rotation.y -= .06;
+			fren.position.z -= .6;
+			fren.position.y += .6035;
+			fren.position.x += 11.4;
+			xwing.add(fren);
+			var fren2 = new THREE.Mesh(new THREE.CubeGeometry(15.5,1.6,1.2),cosaMaterial2);
+			fren2.rotation.x -= 0.218166;
+			fren2.rotation.y += .06;
+			fren2.position.z += .6;
+			fren2.position.y += .6035;
+			fren2.position.x += 11.4;
+			xwing.add(fren2);
+			var fren7 = new THREE.Mesh(new THREE.CubeGeometry(15.49,1.2,1),cosaMaterialx);
+			fren7.rotation.x += 0.218166;
+			fren7.rotation.y += .07;
+			fren7.position.z += .67;
+			fren7.position.y -= .32;
+			fren7.position.x += 11.4;
+			xwing.add(fren7);
+			var fren8 = new THREE.Mesh(new THREE.CubeGeometry(15.49,1.2,1),cosaMaterialx);
+			fren8.rotation.x -= 0.218166;
+			fren8.rotation.y -= .07;
+			fren8.position.z -= .67;
+			fren8.position.y -= .32;
+			fren8.position.x += 11.4;
+			xwing.add(fren8);
+			var light = new THREE.DirectionalLight(0xffffff, 1);
+		  light.position.z = 0;
+		  light.position.x = -22;
+		  xwing.add(light);
+			
+			gala.add(uala);
+			gala.add(ala);
+			gala.add(ala1);
+			gala.add(ala2);
+			xwing.add(gala);
+			
+			gala2 = gala.clone();
+			
+			gala2.rotation.x += Math.PI;
+			gala2.position.y += .51;
+			gala3 = gala.clone();
+			gala3.position.y -= .6;
+			gala4 = gala2.clone();
+			gala4.position.y -= .6;
+			//scene
+			xwing.add(cola);
+			xwing.add(cola1);
+			xwing.add(cola2);
+			xwing.add(cola3);
+			xwing.add(cola4);
+			xwing.add(cola5);
+			xwing.add(cola6);
+			xwing.add(gala2);
+			xwing.add(gala3);
+			xwing.add(gala4);
+			gala.add(prop);
+			gala.add(mprop);
+			gala.add(tub);
+			gala.add(las);
+			gala.add(btub);
+			gala2.add(prop2);
+			gala2.add(mprop2);
+			gala2.add(tub2);
+			gala2.add(las2);
+			gala2.add(btub2);
+			gala3.add(prop3);
+			gala3.add(mprop3);
+			gala3.add(tub3);
+			gala3.add(las3);
+			gala3.add(btub3);
+			gala4.add(prop4);
+			gala4.add(mprop4);
+			gala4.add(tub4);
+			gala4.add(las4);
+			gala4.add(btub4);
+			
+			scene.add(xwing);
+			
+			//fin nave
+			renderer = new THREE.WebGLRenderer({ antialias: true});
+            renderer.setSize(window.innerWidth, window.innerHeight); 
+            document.body.appendChild(renderer.domElement); 
+
+         
+
+            // create some point lights
+            var pointLight = new THREE.PointLight( 0xFFFFFF );
+            var pointLight2 = new THREE.PointLight( 0xFFFFFF );
+			var pointLight3 = new THREE.PointLight( 0xFFFFFF );
+			var pointLight4 = new THREE.PointLight( 0xFFFFFF );
+			var pointLight5 = new THREE.PointLight( 0xFFFFFF );
+            // set its position
+            pointLight.position.x = 200;
+            pointLight.position.y = 150;
+            pointLight.position.z = -330;
+
+            // add to the scene
+            scene.add(pointLight);
+            
+            // set its position
+            pointLight2.position.x = -310;
+            pointLight2.position.y = 50;
+            pointLight2.position.z = -430;
+
+            // add to the scene
+            //scene.add(pointLight2);
+			
+			   // set its position
+            pointLight3.position.x = 110;
+            pointLight3.position.y = -250;
+            pointLight3.position.z = -130;
+
+            // add to the scene
+            scene.add(pointLight3);
+			
+			// set its position
+            pointLight4.position.x = -180;
+            pointLight4.position.y = 150;
+            pointLight4.position.z = 350;
+			
+			// add to the scene
+            scene.add(pointLight4);
+			
+			// set its position
+            pointLight5.position.x = 480;
+            pointLight5.position.y = 150;
+            pointLight5.position.z = 0;
+			
+			// add to the scene
+            scene.add(pointLight5);
+			
+			ambientLight = new THREE.AmbientLight(0x111111);
+            //scene.add(ambientLight); 
+			
+			renderer.shadowMapEnabled = true;
+			  renderer.shadowMapSoft = false;
+
+			  renderer.shadowCameraNear = 3;
+			  renderer.shadowCameraFar = camera.far;
+			  renderer.shadowCameraFov = 50;
+
+			  renderer.shadowMapBias = 0.0039;
+			  renderer.shadowMapDarkness = 0.5;
+			  renderer.shadowMapWidth = 1024;
+			  renderer.shadowMapHeight = 1024;
+			  
+			  light.castShadow = true;
+			  
+			  //shadoooowwwsss
+			  
+			  pared.castShadow = true;
+				pared1.castShadow = true;
+				object500.castShadow = true;
+				object501.castShadow = true;
+				object502.castShadow = true;
+				object503.castShadow = true;
+				object900.castShadow = true;
+				object901.castShadow = true;
+				paredi.castShadow = true;
+				object504.castShadow = true;
+				object505.castShadow = true;
+				object506.castShadow = true;
+				object507.castShadow = true;
+				paredi2.castShadow = true;
+				object508.castShadow = true;
+				object509.castShadow = true;
+				paredi3.castShadow = true;
+				object510.castShadow = true;
+				object511.castShadow = true;
+				paredi4.castShadow = true;
+				paredi5.castShadow = true;
+				paredi6.castShadow = true;
+				object512.castShadow = true;
+				object513.castShadow = true;
+				object514.castShadow = true;
+				object515.castShadow = true;
+				paredi7.castShadow = true;
+				object516.castShadow = true;
+				object517.castShadow = true;
+				object518.castShadow = true;
+				object520.castShadow = true;
+				paredi8.castShadow = true;
+				object521.castShadow = true;
+				object522.castShadow = true;
+				object523a.castShadow = true;
+				object600.castShadow = true;
+				object601.castShadow = true;
+				object602.castShadow = true;
+				paredi9.castShadow = true;
+				object523.castShadow = true;
+				object524.castShadow = true;
+				object524a.castShadow = true;
+				object603.castShadow = true;
+				object604.castShadow = true;
+				object605.castShadow = true;
+				paredi10.castShadow = true;
+				object525.castShadow = true;
+				object526.castShadow = true;
+				object526a.castShadow = true;
+				paredi606.castShadow = true;
+				paredi607.castShadow = true;
+				paredi608.castShadow = true;
+				paredi11.castShadow = true;
+				object527.castShadow = true;
+				object528.castShadow = true;
+				object528a.castShadow = true;
+				paredi609.castShadow = true;
+				paredi610.castShadow = true;
+				paredi611.castShadow = true;
+				paredi12.castShadow = true;
+				object529.castShadow = true;
+				object530.castShadow = true;
+				object531.castShadow = true;
+				object532.castShadow = true;
+				object532a.castShadow = true;
+				paredi612.castShadow = true;
+				paredi613.castShadow = true;
+				paredi614.castShadow = true;
+				paredi615.castShadow = true;
+				paredi616.castShadow = true;
+				paredi13.castShadow = true;
+				object533.castShadow = true;
+				object534.castShadow = true;
+				object535.castShadow = true;
+				object536.castShadow = true;
+				object536a.castShadow = true;
+				paredi617.castShadow = true;
+				paredi618.castShadow = true;
+				paredi619.castShadow = true;
+				paredi620.castShadow = true;
+				paredi621.castShadow = true;
+				paredi14.castShadow = true;
+				object537.castShadow = true;
+				object538.castShadow = true;
+				object539.castShadow = true;
+				object540.castShadow = true;
+				object540a.castShadow = true;
+				paredi622.castShadow = true;
+				paredi623.castShadow = true;
+				paredi624.castShadow = true;
+				paredi625.castShadow = true;
+				paredi626.castShadow = true;
+				paredi15.castShadow = true;
+				object541.castShadow = true;
+				object542.castShadow = true;
+				object543.castShadow = true;
+				object544.castShadow = true;
+				object544a.castShadow = true;
+				paredi627.castShadow = true;
+				paredi628.castShadow = true;
+				paredi629.castShadow = true;
+				paredi630.castShadow = true;
+				paredi631.castShadow = true;
+				paredi16.castShadow = true;
+				object545.castShadow = true;
+				paredi632.castShadow = true;
+				paredi633.castShadow = true;
+				paredi17.castShadow = true;
+				object546.castShadow = true;
+				paredi634.castShadow = true;
+				paredi18.castShadow = true;
+				paredi19.castShadow = true;
+				object0.castShadow = true;
+				object.castShadow = true;
+				object2.castShadow = true;
+				object3.castShadow = true;
+				object4.castShadow = true;
+				object5.castShadow = true;
+				object6.castShadow = true;
+				object7.castShadow = true;
+				object8.castShadow = true;
+				object9.castShadow = true;
+				object10.castShadow = true;
+				object11.castShadow = true;
+				object12.castShadow = true;
+				object13.castShadow = true;
+				object14.castShadow = true;
+				object15.castShadow = true;
+				object16.castShadow = true;
+				object17.castShadow = true;
+				object18.castShadow = true;
+				object19.castShadow = true;
+				object20.castShadow = true;
+				object21.castShadow = true;
+				object22.castShadow = true;
+				object23.castShadow = true;
+				object24.castShadow = true;
+				object25.castShadow = true;
+				object26.castShadow = true;
+				object27.castShadow = true;
+				object28.castShadow = true;
+				object29.castShadow = true;
+				object30.castShadow = true;
+				oobject0.castShadow = true;
+				oobject.castShadow = true;
+				oobject2.castShadow = true;
+				oobject3.castShadow = true;
+				oobject4.castShadow = true;
+				oobject5.castShadow = true;
+				oobject6.castShadow = true;
+				oobject7.castShadow = true;
+				oobject8.castShadow = true;
+				oobject9.castShadow = true;
+				oobject10.castShadow = true;
+				oobject11.castShadow = true;
+				oobject12.castShadow = true;
+				oobject13.castShadow = true;
+				oobject14.castShadow = true;
+				oobject15.castShadow = true;
+				oobject16.castShadow = true;
+				oobject17.castShadow = true;
+				oobject18.castShadow = true;
+				oobject19.castShadow = true;
+				oobject20.castShadow = true;
+				oobject21.castShadow = true;
+				oobject22.castShadow = true;
+				oobject23.castShadow = true;
+				oobject24.castShadow = true;
+				oobject25.castShadow = true;
+				ooobject0.castShadow = true;
+				ooobject.castShadow = true;
+				ooobject2.castShadow = true;
+				ooobject3.castShadow = true;
+				ooobject4.castShadow = true;
+				ooobject5.castShadow = true;
+				ooobject6.castShadow = true;
+				ooobject7.castShadow = true;
+				ooobject8.castShadow = true;
+				ooobject9.castShadow = true;
+				ooobject10.castShadow = true;
+				ooobject11.castShadow = true;
+				ooobject12.castShadow = true;
+				ooobject13.castShadow = true;
+				ooobject14.castShadow = true;
+				ooobject15.castShadow = true;
+				ooobject16.castShadow = true;
+				ooobject17.castShadow = true;
+				ooobject18.castShadow = true;
+				ooobject19.castShadow = true;
+				ooobject20.castShadow = true;
+				ooobject21.castShadow = true;
+				ooobject22.castShadow = true;
+				ooobject23.castShadow = true;
+				ooobject24.castShadow = true;
+				ooobject25.castShadow = true;
+				oooobject0.castShadow = true;
+				oooobject.castShadow = true;
+				oooobject2.castShadow = true;
+				oooobject3.castShadow = true;
+				oooobject4.castShadow = true;
+				oooobject5.castShadow = true;
+				oooobject6.castShadow = true;
+				oooobject7.castShadow = true;
+				oooobject8.castShadow = true;
+				oooobject9.castShadow = true;
+				oooobject10.castShadow = true;
+				oooobject11.castShadow = true;
+				oooobject12.castShadow = true;
+				oooobject13.castShadow = true;
+				oooobject14.castShadow = true;
+				oooobject15.castShadow = true;
+				oooobject16.castShadow = true;
+				oooobject17.castShadow = true;
+				oooobject18.castShadow = true;
+				oooobject19.castShadow = true;
+				oooobject20.castShadow = true;
+				oooobject21.castShadow = true;
+				oooobject22.castShadow = true;
+				oooobject23.castShadow = true;
+				oooobject24.castShadow = true;
+				oooobject25.castShadow = true;
+				obbject.castShadow = true;
+				obbject2.castShadow = true;
+				obbject3.castShadow = true;
+				obbject4.castShadow = true;
+				pisodae.castShadow = true;
+				barandaldae.castShadow = true;
+				cristaldae.castShadow = true;
+				techodae.castShadow = true;
+				
+								pared.receiveShadow = true;
+				pared1.receiveShadow = true;
+				object500.receiveShadow = true;
+				object501.receiveShadow = true;
+				object502.receiveShadow = true;
+				object503.receiveShadow = true;
+				object900.receiveShadow = true;
+				object901.receiveShadow = true;
+				paredi.receiveShadow = true;
+				object504.receiveShadow = true;
+				object505.receiveShadow = true;
+				object506.receiveShadow = true;
+				object507.receiveShadow = true;
+				paredi2.receiveShadow = true;
+				object508.receiveShadow = true;
+				object509.receiveShadow = true;
+				paredi3.receiveShadow = true;
+				object510.receiveShadow = true;
+				object511.receiveShadow = true;
+				paredi4.receiveShadow = true;
+				paredi5.receiveShadow = true;
+				paredi6.receiveShadow = true;
+				object512.receiveShadow = true;
+				object513.receiveShadow = true;
+				object514.receiveShadow = true;
+				object515.receiveShadow = true;
+				paredi7.receiveShadow = true;
+				object516.receiveShadow = true;
+				object517.receiveShadow = true;
+				object518.receiveShadow = true;
+				object520.receiveShadow = true;
+				paredi8.receiveShadow = true;
+				object521.receiveShadow = true;
+				object522.receiveShadow = true;
+				object523a.receiveShadow = true;
+				object600.receiveShadow = true;
+				object601.receiveShadow = true;
+				object602.receiveShadow = true;
+				paredi9.receiveShadow = true;
+				object523.receiveShadow = true;
+				object524.receiveShadow = true;
+				object524a.receiveShadow = true;
+				object603.receiveShadow = true;
+				object604.receiveShadow = true;
+				object605.receiveShadow = true;
+				paredi10.receiveShadow = true;
+				object525.receiveShadow = true;
+				object526.receiveShadow = true;
+				object526a.receiveShadow = true;
+				paredi606.receiveShadow = true;
+				paredi607.receiveShadow = true;
+				paredi608.receiveShadow = true;
+				paredi11.receiveShadow = true;
+				object527.receiveShadow = true;
+				object528.receiveShadow = true;
+				object528a.receiveShadow = true;
+				paredi609.receiveShadow = true;
+				paredi610.receiveShadow = true;
+				paredi611.receiveShadow = true;
+				paredi12.receiveShadow = true;
+				object529.receiveShadow = true;
+				object530.receiveShadow = true;
+				object531.receiveShadow = true;
+				object532.receiveShadow = true;
+				object532a.receiveShadow = true;
+				paredi612.receiveShadow = true;
+				paredi613.receiveShadow = true;
+				paredi614.receiveShadow = true;
+				paredi615.receiveShadow = true;
+				paredi616.receiveShadow = true;
+				paredi13.receiveShadow = true;
+				object533.receiveShadow = true;
+				object534.receiveShadow = true;
+				object535.receiveShadow = true;
+				object536.receiveShadow = true;
+				object536a.receiveShadow = true;
+				paredi617.receiveShadow = true;
+				paredi618.receiveShadow = true;
+				paredi619.receiveShadow = true;
+				paredi620.receiveShadow = true;
+				paredi621.receiveShadow = true;
+				paredi14.receiveShadow = true;
+				object537.receiveShadow = true;
+				object538.receiveShadow = true;
+				object539.receiveShadow = true;
+				object540.receiveShadow = true;
+				object540a.receiveShadow = true;
+				paredi622.receiveShadow = true;
+				paredi623.receiveShadow = true;
+				paredi624.receiveShadow = true;
+				paredi625.receiveShadow = true;
+				paredi626.receiveShadow = true;
+				paredi15.receiveShadow = true;
+				object541.receiveShadow = true;
+				object542.receiveShadow = true;
+				object543.receiveShadow = true;
+				object544.receiveShadow = true;
+				object544a.receiveShadow = true;
+				paredi627.receiveShadow = true;
+				paredi628.receiveShadow = true;
+				paredi629.receiveShadow = true;
+				paredi630.receiveShadow = true;
+				paredi631.receiveShadow = true;
+				paredi16.receiveShadow = true;
+				object545.receiveShadow = true;
+				paredi632.receiveShadow = true;
+				paredi633.receiveShadow = true;
+				paredi17.receiveShadow = true;
+				object546.receiveShadow = true;
+				paredi634.receiveShadow = true;
+				paredi18.receiveShadow = true;
+				paredi19.receiveShadow = true;
+				object0.receiveShadow = true;
+				object.receiveShadow = true;
+				object2.receiveShadow = true;
+				object3.receiveShadow = true;
+				object4.receiveShadow = true;
+				object5.receiveShadow = true;
+				object6.receiveShadow = true;
+				object7.receiveShadow = true;
+				object8.receiveShadow = true;
+				object9.receiveShadow = true;
+				object10.receiveShadow = true;
+				object11.receiveShadow = true;
+				object12.receiveShadow = true;
+				object13.receiveShadow = true;
+				object14.receiveShadow = true;
+				object15.receiveShadow = true;
+				object16.receiveShadow = true;
+				object17.receiveShadow = true;
+				object18.receiveShadow = true;
+				object19.receiveShadow = true;
+				object20.receiveShadow = true;
+				object21.receiveShadow = true;
+				object22.receiveShadow = true;
+				object23.receiveShadow = true;
+				object24.receiveShadow = true;
+				object25.receiveShadow = true;
+				object26.receiveShadow = true;
+				object27.receiveShadow = true;
+				object28.receiveShadow = true;
+				object29.receiveShadow = true;
+				object30.receiveShadow = true;
+				oobject0.receiveShadow = true;
+				oobject.receiveShadow = true;
+				oobject2.receiveShadow = true;
+				oobject3.receiveShadow = true;
+				oobject4.receiveShadow = true;
+				oobject5.receiveShadow = true;
+				oobject6.receiveShadow = true;
+				oobject7.receiveShadow = true;
+				oobject8.receiveShadow = true;
+				oobject9.receiveShadow = true;
+				oobject10.receiveShadow = true;
+				oobject11.receiveShadow = true;
+				oobject12.receiveShadow = true;
+				oobject13.receiveShadow = true;
+				oobject14.receiveShadow = true;
+				oobject15.receiveShadow = true;
+				oobject16.receiveShadow = true;
+				oobject17.receiveShadow = true;
+				oobject18.receiveShadow = true;
+				oobject19.receiveShadow = true;
+				oobject20.receiveShadow = true;
+				oobject21.receiveShadow = true;
+				oobject22.receiveShadow = true;
+				oobject23.receiveShadow = true;
+				oobject24.receiveShadow = true;
+				oobject25.receiveShadow = true;
+				ooobject0.receiveShadow = true;
+				ooobject.receiveShadow = true;
+				ooobject2.receiveShadow = true;
+				ooobject3.receiveShadow = true;
+				ooobject4.receiveShadow = true;
+				ooobject5.receiveShadow = true;
+				ooobject6.receiveShadow = true;
+				ooobject7.receiveShadow = true;
+				ooobject8.receiveShadow = true;
+				ooobject9.receiveShadow = true;
+				ooobject10.receiveShadow = true;
+				ooobject11.receiveShadow = true;
+				ooobject12.receiveShadow = true;
+				ooobject13.receiveShadow = true;
+				ooobject14.receiveShadow = true;
+				ooobject15.receiveShadow = true;
+				ooobject16.receiveShadow = true;
+				ooobject17.receiveShadow = true;
+				ooobject18.receiveShadow = true;
+				ooobject19.receiveShadow = true;
+				ooobject20.receiveShadow = true;
+				ooobject21.receiveShadow = true;
+				ooobject22.receiveShadow = true;
+				ooobject23.receiveShadow = true;
+				ooobject24.receiveShadow = true;
+				ooobject25.receiveShadow = true;
+				oooobject0.receiveShadow = true;
+				oooobject.receiveShadow = true;
+				oooobject2.receiveShadow = true;
+				oooobject3.receiveShadow = true;
+				oooobject4.receiveShadow = true;
+				oooobject5.receiveShadow = true;
+				oooobject6.receiveShadow = true;
+				oooobject7.receiveShadow = true;
+				oooobject8.receiveShadow = true;
+				oooobject9.receiveShadow = true;
+				oooobject10.receiveShadow = true;
+				oooobject11.receiveShadow = true;
+				oooobject12.receiveShadow = true;
+				oooobject13.receiveShadow = true;
+				oooobject14.receiveShadow = true;
+				oooobject15.receiveShadow = true;
+				oooobject16.receiveShadow = true;
+				oooobject17.receiveShadow = true;
+				oooobject18.receiveShadow = true;
+				oooobject19.receiveShadow = true;
+				oooobject20.receiveShadow = true;
+				oooobject21.receiveShadow = true;
+				oooobject22.receiveShadow = true;
+				oooobject23.receiveShadow = true;
+				oooobject24.receiveShadow = true;
+				oooobject25.receiveShadow = true;
+				obbject.receiveShadow = true;
+				obbject2.receiveShadow = true;
+				obbject3.receiveShadow = true;
+				obbject4.receiveShadow = true;
+				pisodae.receiveShadow = true;
+				barandaldae.receiveShadow = true;
+				cristaldae.receiveShadow = true;
+				techodae.receiveShadow = true;
+			  
+			  //fin shadooowwwsss
+            
+            // set the background color
+            renderer.setClearColor(0x000022, 1);
+			var render = function () { 
+                requestAnimationFrame(render); 
+				camera.position.z = cam_zpos; 
+                camera.position.x = cam_xpos; 
+                camera.rotation.y = ang_rad;  
+				camera.position.y = y;
+                renderer.render(scene, camera); 
+            };
+
+            render();             
+        </script> 
+    </body> 
+</html>
